@@ -275,7 +275,11 @@
   "aspect": 0.8333,
   "title": "Trying On Shoes",
   "author": "Shopify Partners",
-  "license": "burst"
+  "license": "burst",
+  "focus": {
+   "x": 0.56,
+   "y": 0.45
+  }
  },
  {
   "key": "leaves",

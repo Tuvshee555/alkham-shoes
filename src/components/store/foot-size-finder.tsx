@@ -38,7 +38,7 @@ export function FootSizeFinder({ sizes }: { sizes: FootSize[] }) {
         {!value.trim() && 'Хэмжсэн уртаа оруулахад размер тань гарна.'}
         {value.trim() && hit && (
           <>
-            {hit.kids ? 'Хүүхдийн' : 'Насанд хүрэгчдийн'} <strong>{hit.size}</strong> размер — хөлийн урт {hit.min}–{hit.max} см.{' '}
+            {hit.kids ? 'Хүүхдийн' : 'Насанд хүрэгчдийн'} <strong>{hit.size}</strong> размер — хөлийн урт {hit.min.toFixed(1)}–{hit.max.toFixed(1)} см.{' '}
             <Link href={`${hit.kids ? '/shop/kids' : '/shop'}?size=${hit.size}&stock=1`} className="underline underline-offset-4">
               {hit.size} размерт байгаа гутлыг үзэх
             </Link>
