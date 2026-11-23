@@ -235,7 +235,10 @@ export const GARMENT_GROUPS: { words: string[]; categories: string[] }[] = [
   { words: ['hoodie', 'худи', 'свитшот'], categories: ['hoodies'] },
   { words: ['свитер', 'кардиган', 'сүлжмэл'], categories: ['knitwear'] },
   { words: ['хүрэм', 'хүрмийг', 'пальто', 'пуховик', 'хантааз', 'куртка'], categories: ['outerwear'] },
-  { words: ['малгай', 'кепи', 'бейсболк', 'ороолт', 'цүнх', 'бүс'], categories: ['accessories'] },
+  { words: ['малгай', 'кепи', 'бейсболк'], categories: ['accessories'] },
+  { words: ['цүнх', 'цүнхний', 'цүнхээ', 'цүнхийг'], categories: ['accessories', 'bags'] },
+  { words: ['ороолт', 'ороолтоо', 'ороолтыг'], categories: ['accessories', 'bags'] },
+  { words: ['бүс', 'бүсээ'], categories: ['accessories'] },
   { words: ['гутал', 'гутлын', 'гутлаа', 'гутлыг'], categories: ['shoes', 'sneakers', 'boots', 'heels', 'formal', 'flats'] },
   // A kind of shoe: its own category where a shop has one, otherwise the product name,
   // so «пүүз» does not list the boots.

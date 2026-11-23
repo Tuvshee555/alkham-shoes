@@ -145,6 +145,8 @@ const TAG_PATTERNS: [string, RegExp][] = [
   ['wool', /(?:ноос(?!т))/iu],
   ['leather', /(?:арьс)/iu],
   ['linen', /(?:маалинга)/iu],
+  ['party', /(?:баяр(?!ла)|үдэшлэг|шинэ\s+жил|party)/iu],
+  ['wedding', /(?:хурим|wedding)/iu],
 ]
 
 export function understand(raw: string): Understood {

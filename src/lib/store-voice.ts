@@ -14,6 +14,16 @@ export const STORE_VOICE = {
   orderExample: 'Бүх хар пүүз 42 авъя',
   inputPlaceholder: 'Жишээ: челси ботинк 38 байгаа юу?',
   searchPlaceholder: 'Юу хайж байна вэ? — пүүз, челси, өвлийн ботинк…',
+  /** Example questions on the admin's test-chat page. */
+  tryThese: [
+    'Челси ботинк 38 байгаа юу?',
+    'ene puuz hed ve',
+    '200,000₮-өөс доош ямар гутал байна?',
+    'Хөлийн урт 26.4 см, ямар размер авах вэ?',
+    'Хүргэлт хэд хоног вэ?',
+    'Бүх хар пүүз 42 авъя → энд захиалъя',
+    'Ажилтантай холбогдмоор байна',
+  ],
 } as const
 
 /** A size question to suggest for a product: one of its own middle sizes ("42 размер байгаа юу?"). */

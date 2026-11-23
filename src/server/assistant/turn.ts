@@ -433,6 +433,9 @@ async function aiAnswer(input: TurnInput, focus: Focus | null): Promise<{ answer
 
 /** Products matching type, price, colour/size (same in-stock variant), season and audience. */
 function search(tc: ToolContext, u: Understood, typed: CatalogProduct[], named: CatalogProduct[]): Answer | null {
+  // A kind of item the shop does not carry ("даашинз" in a shoe shop): never list everything
+  // under that name — the not-in-catalogue answer says so instead.
+  if (u.garments.length > 0 && typed.length === 0 && named.length <= 1) return null
   let pool = typed.length ? typed : named.length > 1 ? named : tc.catalog
   const notes: string[] = []
   if (u.maxPrice !== null) pool = pool.filter((p) => p.minPrice <= u.maxPrice!)
