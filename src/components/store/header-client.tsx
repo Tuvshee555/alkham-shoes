@@ -4,11 +4,12 @@ import { ArrowUpRight, Menu, Search, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { STORE_VOICE } from '@/lib/store-voice'
 import { BRAND } from '@/lib/brand'
 
 type NavItem = { slug: string; name: string }
 
-const POPULAR = ['Hoodie', 'Ноолуур', 'Жинс', 'Пальто', 'Цагаан цамц']
+const POPULAR = ['Пүүз', 'Челси ботинк', 'Өвлийн ботинк', 'Лофер', 'Хүүхдийн гутал']
 
 export function SearchButton() {
   const [open, setOpen] = useState(false)
@@ -56,7 +57,7 @@ export function SearchButton() {
                 id="site-search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Юу хайж байна вэ? — hoodie, ноолуур, хар жинс…"
+                placeholder={STORE_VOICE.searchPlaceholder}
                 className="h-12 flex-1 bg-transparent text-lg outline-none placeholder:text-stone-500"
                 maxLength={80}
                 autoComplete="off"
@@ -139,7 +140,7 @@ export function MobileMenu({ categories, collections }: { categories: NavItem[];
                 <li><Link href="/orders" onClick={close}>Миний захиалга</Link></li>
                 <li><Link href="/wishlist" onClick={close}>Хадгалсан бараа</Link></li>
                 <li><Link href="/help/delivery" onClick={close}>Хүргэлт, буцаалт</Link></li>
-                <li><Link href="/about" onClick={close}>Брэндийн тухай</Link></li>
+                <li><Link href="/about" onClick={close}>Дэлгүүрийн тухай</Link></li>
                 <li><Link href="/admin/login" onClick={close}>Удирдлагын самбар (демо)</Link></li>
               </ul>
               <a href={BRAND.portfolioUrl} className="flex items-center gap-1.5 border-t border-stone-200 pt-6 text-sm text-stone-600">

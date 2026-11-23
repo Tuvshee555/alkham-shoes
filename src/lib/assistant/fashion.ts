@@ -25,10 +25,15 @@ export const FASHION_ALIASES: Alias[] = [
   [/\b(?:oroolt|orooltoo|scarf)\b/gi, 'ороолт'],
   [/\b(?:hantaaz|vest)\b/gi, 'хантааз'],
   [/\b(?:hudi|hudee|hoodi)\b/gi, 'hoodie'],
-  [/\b(?:gutal|gutla|gutlaa|gutliin|gutlyn|shoes?|boots?|footwear)\b/gi, 'гутал'],
+  [/\b(?:gutal|gutla|gutlaa|gutliin|gutlyn|shoes?|footwear)\b/gi, 'гутал'],
   [/\b(?:puuz|puuzee|puuznii|puuziig|sneakers?|trainers?)\b/gi, 'пүүз'],
-  [/\b(?:botink|botinok|botinka)\b/gi, 'ботинк'],
+  [/\b(?:botink|botinok|botinka|boots?)\b/gi, 'ботинк'],
   [/\b(?:lofer|loafers?)\b/gi, 'лофер'],
+  [/\b(?:tufli|tuphli|pumps?)\b/gi, 'туфли'],
+  [/\b(?:chelsi|chelsea)\b/gi, 'челси'],
+  [/\b(?:shaahai|shaakhai|slippers?)\b/gi, 'шаахай'],
+  [/\b(?:usgiitei|osgiitei|heels?)\b/gi, 'өсгийтэй'],
+  [/\b(?:huuhdiin|huuhdin|huuhded|kids?)\b/gi, 'хүүхдийн'],
   // materials
   [/\b(?:noolur|nooluur|nooluuran|cashmere)\b/gi, 'ноолуур'],
   [/\b(?:noos|noosnii|noosun|wool)\b/gi, 'ноос'],
@@ -231,11 +236,19 @@ export const GARMENT_GROUPS: { words: string[]; categories: string[] }[] = [
   { words: ['свитер', 'кардиган', 'сүлжмэл'], categories: ['knitwear'] },
   { words: ['хүрэм', 'хүрмийг', 'пальто', 'пуховик', 'хантааз', 'куртка'], categories: ['outerwear'] },
   { words: ['малгай', 'кепи', 'бейсболк', 'ороолт', 'цүнх', 'бүс'], categories: ['accessories'] },
-  { words: ['гутал', 'гутлын', 'гутлаа', 'гутлыг'], categories: ['shoes'] },
-  // A kind of shoe is matched by product name, so «пүүз» does not list the boots.
-  { words: ['пүүз', 'пүүзний', 'пүүзээ', 'пүүзийг'], categories: [] },
-  { words: ['ботинк', 'ботинкийг'], categories: [] },
+  { words: ['гутал', 'гутлын', 'гутлаа', 'гутлыг'], categories: ['shoes', 'sneakers', 'boots', 'heels', 'formal', 'flats'] },
+  // A kind of shoe: its own category where a shop has one, otherwise the product name,
+  // so «пүүз» does not list the boots.
+  { words: ['пүүз', 'пүүзний', 'пүүзээ', 'пүүзийг'], categories: ['sneakers'] },
+  { words: ['ботинк', 'ботинкийг', 'ботинкны'], categories: ['boots'] },
   { words: ['лофер', 'лоферыг'], categories: [] },
+  { words: ['туфли', 'туфлийг'], categories: ['formal'] },
+  { words: ['өсгийтэй'], categories: ['heels'] },
+  { words: ['челси'], categories: [] },
+  { words: ['мюль'], categories: [] },
+  { words: ['шаахай', 'шаахайг'], categories: [] },
+  { words: ['хавтгай'], categories: ['flats'] },
+  { words: ['хүүхдийн', 'хүүхдэд', 'нярайн', 'нярайд'], categories: ['kids'] },
 ]
 
 /** Garment words in a normalised message, with the categories they may mean. */
@@ -246,5 +259,8 @@ export function garmentMentions(normalized: string): { word: string; categories:
     const hit = ws.find((w) => g.words.some((gw) => w === gw || (gw.length >= 4 && w.startsWith(gw))))
     if (hit) out.push({ word: g.words[0], categories: g.categories })
   }
+  // «хүүхдийн гутал», «хүүхдийн пүүз»: children's shoes, not every shoe plus every kids' item.
+  const kids = out.find((m) => m.categories.length === 1 && m.categories[0] === 'kids')
+  if (kids && out.length > 1) return [{ word: [kids.word, ...out.filter((m) => m !== kids).map((m) => m.word)].join(' '), categories: ['kids'] }]
   return out
 }

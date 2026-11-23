@@ -38,7 +38,7 @@ async function PolicyBody({ params }: Props) {
           </Link>
         ))}
         <Link href="/size-guide" className="shrink-0 px-3 py-2 text-[13.5px] hover:bg-paper-2">
-          Хэмжээний хүснэгт
+          Размерын хүснэгт
         </Link>
       </nav>
       <article className="max-w-2xl">

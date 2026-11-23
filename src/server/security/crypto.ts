@@ -9,13 +9,17 @@ export function sha256Hex(value: string): string {
   return createHash('sha256').update(value).digest('hex')
 }
 
+let derived: string | null = null
+
 function secret(): string {
   const value = process.env.SESSION_SECRET
-  if (!value || value.length < 32) {
-    if (process.env.NODE_ENV === 'production') throw new Error('SESSION_SECRET must be set (>= 32 random characters)')
-    return 'development-only-secret-do-not-use-in-production'
-  }
-  return value
+  if (value && value.length >= 32) return value
+  // Without its own SESSION_SECRET a deployment derives one from DATABASE_URL: server-only,
+  // secret (it holds the database password) and stable across deploys.
+  const databaseUrl = process.env.DATABASE_URL
+  if (databaseUrl) return (derived ??= createHash('sha256').update(`alkham:session-secret:${databaseUrl}`).digest('base64url'))
+  if (process.env.NODE_ENV === 'production') throw new Error('SESSION_SECRET (or DATABASE_URL) must be set')
+  return 'development-only-secret-do-not-use-in-production'
 }
 
 export function hmac(value: string): string {

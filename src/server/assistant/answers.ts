@@ -2,12 +2,14 @@
 // prices with per-size overrides, exact colour × size stock with alternatives,
 // colours, sizes, material, care, fit, the owner's size chart, comparisons,
 // lists and store policies. Nothing here can state a fact the database lacks.
+import { sizeChartKind, type SizeChartKind } from '@/lib/size-chart'
 import { matchColors, type ColorMention } from '@/lib/assistant/fashion'
 import type { ChatAction } from '@/lib/assistant/types'
 import { AVAILABILITY_LABELS, compareSizes, sizeLabel, variantAvailability } from '@/lib/catalog'
 import { availabilityOf, type CatalogColor, type CatalogProduct, type CatalogVariant } from '@/lib/catalog-filter'
 import { formatMoney } from '@/lib/money'
 import { POLICY_SLUGS } from '@/lib/settings'
+import { sizeQuestion, STORE_VOICE } from '@/lib/store-voice'
 import type { ToolContext } from './tools'
 import type { PolicyTopic, Understood } from './understand'
 
@@ -231,7 +233,7 @@ export function stockAnswer(tc: ToolContext, p: CatalogProduct, u: Understood, f
     text: lines.join('\n'),
     productIds: [p.id],
     actions: [...actions, pageAction(p)],
-    suggestions: q.sizes.length === 0 ? ['Хэмжээний хүснэгт', 'Хүргэлт хэд хоног вэ?'] : ['Авъя', 'Хүргэлт хэд хоног вэ?'],
+    suggestions: q.sizes.length === 0 ? ['Размерын хүснэгт', 'Хүргэлт хэд хоног вэ?'] : ['Авъя', 'Хүргэлт хэд хоног вэ?'],
     events,
     focus: focusFor(p, q, now, focus),
   }
@@ -259,7 +261,7 @@ export function priceAnswer(tc: ToolContext, p: CatalogProduct, u: Understood, f
   }
   const colors = p.colors.map((c) => c.name).join(', ')
   text += `\nӨнгө: ${colors}. ${link(p)}`
-  return { text, productIds: [p.id], actions: [pageAction(p)], suggestions: ['L размер байгаа юу?', 'Ямар өнгөтэй вэ?'], events: ['product_answer'], focus: focusFor(p, q, now, focus) }
+  return { text, productIds: [p.id], actions: [pageAction(p)], suggestions: [sizeQuestion(p.sizes) ?? 'Хүргэлт хэд хоног вэ?', 'Ямар өнгөтэй вэ?'], events: ['product_answer'], focus: focusFor(p, q, now, focus) }
 }
 
 /** All colours with the sizes in stock — or the other colours than the one chosen. */
@@ -282,7 +284,7 @@ export function colorsAnswer(tc: ToolContext, p: CatalogProduct, u: Understood, 
     if (p.colors.length === 1 && other) text += `\n- ${p.colors[0].name}: ${sizesInStock(tc, p, p.colors[0].id) || 'одоогоор дууссан'}`
   }
   text += `\n${link(p)}`
-  return { text, productIds: [p.id], actions: [pageAction(p)], suggestions: ['L размер байгаа юу?', 'Үнэ хэд вэ?'], events: ['product_answer'], focus: focusFor(p, q, now, focus) }
+  return { text, productIds: [p.id], actions: [pageAction(p)], suggestions: [sizeQuestion(p.sizes) ?? 'Хүргэлт хэд хоног вэ?', 'Үнэ хэд вэ?'], events: ['product_answer'], focus: focusFor(p, q, now, focus) }
 }
 
 /** The sizes this product comes in, and which are in stock (for the chosen colour when there is one). */
@@ -327,7 +329,6 @@ export function factsAnswer(tc: ToolContext, p: CatalogProduct, u: Understood, f
   }
 }
 
-const BOTTOM_CATEGORIES = new Set(['trousers', 'jeans'])
 
 /** Body measurements a customer may give, by the chart column they belong to. */
 const BODY_MEASURES: { column: string; words: string }[] = [
@@ -371,12 +372,14 @@ function variantsForChartSize(p: CatalogProduct, rowSize: string): CatalogVarian
  * measurement the customer gives (chest, waist, hips) is read against that chart.
  */
 export function sizeAdviceAnswer(tc: ToolContext, p: CatalogProduct | null, text = ''): Answer {
-  const tops = tc.sizeGuide.tops, bottoms = tc.sizeGuide.bottoms, shoes = tc.sizeGuide.shoes
+  const tops = tc.sizeGuide.tops, bottoms = tc.sizeGuide.bottoms, shoes = tc.sizeGuide.shoes, kids = tc.sizeGuide.kids
   const measureOf = (g: typeof tops) => bodyMeasure(text, g.columns)
+  const chart = (kind: SizeChartKind) => (kind === 'shoes' ? shoes : kind === 'kids' ? kids : kind === 'bottoms' ? bottoms : tops) ?? tops
+  // With no product in view: a foot length means the shoe chart; a shoe shop has no clothes chart.
   const guide = p
-    ? p.categorySlug === 'shoes' && shoes ? shoes : BOTTOM_CATEGORIES.has(p.categorySlug) ? bottoms : tops
-    : shoes && measureOf(shoes) ? shoes : !measureOf(tops) && measureOf(bottoms) ? bottoms : tops
-  const forShoes = guide === shoes
+    ? chart(sizeChartKind(p.categorySlug))
+    : shoes && (measureOf(shoes) || tops.rows.length === 0) ? shoes : !measureOf(tops) && measureOf(bottoms) ? bottoms : tops
+  const forShoes = guide === shoes || guide === kids
   // The owner's note is about how clothes fit; for shoes the product's own fit line says it.
   const note = forShoes ? '' : tc.sizeGuide.note
   const measure = text ? measureOf(guide) : null
@@ -405,7 +408,7 @@ export function sizeAdviceAnswer(tc: ToolContext, p: CatalogProduct | null, text
     } else {
       lines.push(`${label} ${measure.cm} см манай хэмжээний хүснэгтэд (${guide.rows.map((row) => row.size).join(', ')}) багтахгүй байна — ажилтнаас тодруулаарай.`)
     }
-    lines.push('Бүтэн хүснэгт: [хэмжээний хүснэгт](/size-guide). Эргэлзвэл «ажилтантай холбогдох» гэж бичээрэй — ажилтан тусална.')
+    lines.push('Бүтэн хүснэгт: [размерын хүснэгт](/size-guide). Эргэлзвэл «ажилтантай холбогдох» гэж бичээрэй — ажилтан тусална.')
   } else {
     if (p) lines.push(`${quote(p)}${p.fit ? ` — хэлбэр: ${p.fit}.` : '.'}`)
     lines.push(
@@ -416,13 +419,13 @@ export function sizeAdviceAnswer(tc: ToolContext, p: CatalogProduct | null, text
     lines.push(`${['Хэмжээ', ...guide.columns].join(' · ')}`)
     for (const row of guide.rows) lines.push(`- ${row.size}: ${guide.columns.map((c) => row[c]).join(' · ')}`)
     if (note) lines.push(note)
-    lines.push('Бүтэн хүснэгт: [хэмжээний хүснэгт](/size-guide). Эргэлзвэл «ажилтантай холбогдох» гэж бичээрэй — ажилтан тусална.')
+    lines.push('Бүтэн хүснэгт: [размерын хүснэгт](/size-guide). Эргэлзвэл «ажилтантай холбогдох» гэж бичээрэй — ажилтан тусална.')
   }
   return {
     text: lines.join('\n'),
     productIds: p ? [p.id] : [],
-    actions: [{ type: 'link', href: '/size-guide', label: 'Хэмжээний хүснэгт' }],
-    suggestions: oneSize ? ['Үнэ хэд вэ?'] : ['Ажилтантай холбогдох', 'Хэмжээ солих нөхцөл'],
+    actions: [{ type: 'link', href: '/size-guide', label: 'Размерын хүснэгт' }],
+    suggestions: oneSize ? ['Үнэ хэд вэ?'] : ['Ажилтантай холбогдох', 'Размер солих нөхцөл'],
     events: ['size_guide'],
   }
 }
@@ -462,8 +465,9 @@ export function listAnswer(tc: ToolContext, products: CatalogProduct[], heading:
   })
   const total = more?.total ?? products.length
   const tail = total > shown.length ? `\n…нийт ${total}. Бүгдийг [дэлгүүрээс](${more?.href ?? '/shop'}) үзээрэй.` : ''
-  // A list of shoes gets a shoe size in the example ("40"), clothes a letter size ("L").
-  const exampleSize = shown.length > 0 && shown.every((p) => p.categorySlug === 'shoes') ? '40' : 'L'
+  // The example names a size the second listed product is sold in ("2 41 размер…", "2 M размер…").
+  const example = shown[1] ?? shown[0]
+  const exampleSize = example ? (sizeQuestion(example.sizes)?.split(' ')[0] ?? 'L') : 'L'
   return {
     text: `${heading}\n${lines.join('\n')}${tail}\nДугаараар нь сонгоод асуугаарай (жишээ: «2 ${exampleSize} размер байгаа юу?»).`,
     productIds: shown.map((p) => p.id),
@@ -518,7 +522,7 @@ export function policyAnswer(tc: ToolContext, topic: PolicyTopic): Answer {
       return {
         ...base,
         text: [`**${policy.title}**`, ...paragraphs(policy.body).slice(0, 5), `Дэлгэрэнгүй: ${policyLink(topic, policy.title)}`].join('\n\n'),
-        suggestions: topic === 'exchange' ? ['L размер байгаа юу?', 'Буцаах нөхцөл ямар вэ?'] : ['Хүргэлт хэд хоног вэ?', 'Яаж захиалах вэ?'],
+        suggestions: topic === 'exchange' ? ['Размерын хүснэгт', 'Буцаах нөхцөл ямар вэ?'] : ['Хүргэлт хэд хоног вэ?', 'Яаж захиалах вэ?'],
       }
     }
     case 'ordering': {
@@ -534,7 +538,7 @@ export function policyAnswer(tc: ToolContext, topic: PolicyTopic): Answer {
         ]
           .filter(Boolean)
           .join('\n'),
-        suggestions: ['Хар hoodie L авъя', 'Хүргэлт хэд хоног вэ?'],
+        suggestions: [STORE_VOICE.orderExample, 'Хүргэлт хэд хоног вэ?'],
       }
     }
     case 'tracking':
@@ -568,7 +572,7 @@ export function policyAnswer(tc: ToolContext, topic: PolicyTopic): Answer {
     case 'about':
       return {
         ...base,
-        text: `${tc.info.storeName} бол Ursgal Digital-ын портфолиод зориулсан зохиомол хувцасны брэнд — бүртгэлтэй компани биш. Бараа, үнэ, үлдэгдэл нь жишээ өгөгдөл боловч дэлгүүрийн сан, захиалга, үлдэгдлийн систем бодитоор ажилладаг. Төлбөр симуляц, мөнгө шилжихгүй.`,
+        text: `${tc.info.storeName} бол Ursgal Digital-ын портфолиод зориулсан зохиомол ${STORE_VOICE.kindMn} — бүртгэлтэй компани биш. Бараа, үнэ, үлдэгдэл нь жишээ өгөгдөл боловч дэлгүүрийн сан, захиалга, үлдэгдлийн систем бодитоор ажилладаг. Төлбөр симуляц, мөнгө шилжихгүй.`,
         suggestions: ['Ямар бараа байна?', 'Яаж захиалах вэ?'],
       }
   }

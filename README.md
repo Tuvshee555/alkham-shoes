@@ -1,36 +1,37 @@
-# MANAN — fashion e-commerce demonstration
+# ALKHAM — shoe store demonstration
 
-A complete online store for a **fictional** premium Mongolian fashion label, built by
-[Ursgal Digital](https://ursgal-digital.vercel.app) as a portfolio demonstration. The brand,
+A complete online shoe store for a **fictional** Ulaanbaatar shop, built by
+[Ursgal Digital](https://www.ursgaldigital.com) as a portfolio demonstration. The shop,
 products, prices, stock and sample orders are invented; the system is real: a Postgres
-database, variant-level inventory, server-priced checkout, an admin dashboard and a shopping
+database, size-level inventory, server-priced checkout, an admin dashboard and a shopping
 assistant that answers from the database.
+
+ALKHAM is a fork of the MANAN clothing demo (`Tuvshee555/clothing-brand`): the same engine with
+its own catalogue (`src/server/seed/alkham/`), identity and copy. The engine's tests still run
+against the MANAN reference catalogue (`src/server/seed/reference/`, `STORE_CATALOG=reference`)
+so both stores keep the same behaviour; `tests/unit/alkham-catalog.test.ts` checks ALKHAM's own data.
 
 | | |
 |---|---|
-| Store | https://manan-store.vercel.app |
-| Admin | https://manan-store.vercel.app/admin/login → «Демо горимоор нэвтрэх» (no password) |
-| Portfolio | https://ursgal-digital.vercel.app/portfolio/fashion |
+| Store | https://alkham-shoes.vercel.app |
+| Admin | `/admin/login` → «Демо горимоор нэвтрэх» (no password) |
+| Portfolio | https://www.ursgaldigital.com/portfolio/shoes |
 
-Everything customer-facing is in Mongolian; prices are integer tögrög (`219,000₮`).
+Everything customer-facing is in Mongolian; prices are integer tögrög (`189,000₮`).
 
 ## What is real and what is simulated
 
 | Area | Status |
 |---|---|
-| Catalogue, 35 products (clothes and shoes), 208 colour × size variants, images | **Real** — read from Postgres on every page |
+| Catalogue, 27 shoes in 6 categories (sneakers, boots, heels, formal, flats and slippers, kids), colour × EU-size variants, photos | **Real** — read from Postgres on every page |
 | Stock per variant, low-stock / sold-out states | **Real** — live, enforced by the database (`stock >= 0`) |
-| Cart (per browser, no account) | **Real** — stored in Postgres, re-priced from the database |
-| Checkout, order creation, stock reservation | **Real** — one transaction with row locks; cannot oversell |
-| Order statuses, cancellation returning stock, inventory ledger | **Real** |
-| Admin: products, variants, stock adjustments, orders, customers, settings | **Real** (owner account); the public demo is restricted |
-| Shopping assistant | **Real** — Lorentz's engine adapted to clothing: exact colour × size answers, Latin-script Mongolian, context, chat orders after an explicit «тийм», hand-over to staff. Catalogue mode (deterministic, database-only) without a key; AI mode (OpenAI tool calling + fact check) when one is configured |
-| AI Chatbot admin | **Real** — conversations, hand-over queue, inquiries, knowledge (owner FAQ), settings, analytics, AI usage and costs, activity, problems, test chat |
-| Chat orders | **Real** orders through the checkout's own core (stock reserved, 60-minute hold); payment is the QPay **simulation** |
-| QPay | **Simulated** — clearly labelled; the QPay adapter is built but the demo never takes money |
+| Size run on the home page, foot-length size finder | **Real** — sizes and foot lengths come from the store's size chart in the database |
+| Cart, checkout, order creation, stock reservation | **Real** — one transaction with row locks; cannot oversell |
+| Admin: products, variants, stock, orders, customers, settings | **Real** (owner account); the public demo is restricted |
+| Shopping assistant | **Real** — exact colour × size answers, foot length → size, Latin-script Mongolian, chat orders after an explicit «тийм», hand-over to staff. Catalogue mode (deterministic) without an AI key |
+| QPay | **Simulated** — clearly labelled; the adapter is built but the demo never takes money |
 | Delivery, e-mail, SMS | **Not performed** — demo only |
-| Newsletter | Stores the address; no e-mails are sent |
-| Brand, products, prices, sample orders, policies | **Fictional** |
+| Shop, products, prices, sample orders, policies | **Fictional** |
 
 ## Stack
 
@@ -43,12 +44,12 @@ server actions validate → authorize → call service).
 
 ```bash
 npm install
-cp .env.example .env.local     # set SESSION_SECRET (32+ chars), ADMIN_EMAIL / ADMIN_PASSWORD
+cp .env.example .env.local     # set ADMIN_EMAIL / ADMIN_PASSWORD for a local owner account
 npm run db:dev                 # own terminal: local PostgreSQL; the first run migrates and seeds it
 npm run dev                    # http://localhost:3200
 ```
 
-Local development and tests use only the local database from `npm run db:dev` (`DATABASE_URL=postgres://postgres:postgres@127.0.0.1:54328/manan_dev`, data in `.dev-db/`). The production database URL is set only in the Vercel project; never put it in `.env.local`.
+Local development and tests use only the local database from `npm run db:dev` (`DATABASE_URL=postgres://postgres:postgres@127.0.0.1:54328/alkham_dev`, data in `.dev-db/`). The production database URL is set only in the Vercel project; never put it in `.env.local`.
 
 | Command | |
 |---|---|
@@ -74,7 +75,7 @@ Local development and tests use only the local database from `npm run db:dev` (`
 
 ## Documentation
 
-- [docs/BRAND.md](docs/BRAND.md) — name directions, identity, voice
+- [docs/BRAND.md](docs/BRAND.md) — name, identity, voice
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — layers, caching, data flow, demo scope
 - [docs/DATABASE.md](docs/DATABASE.md) — schema, invariants, inventory ledger, seed
 - [docs/ASSISTANT.md](docs/ASSISTANT.md) — the assistant: what came from Lorentz, clothing layer, chat orders, hand-over, AI mode, evaluation

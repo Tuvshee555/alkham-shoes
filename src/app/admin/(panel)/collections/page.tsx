@@ -14,7 +14,7 @@ export default async function CollectionsPage() {
   const readOnly = !hasPermission(actor.role, 'products.edit')
   return (
     <>
-      <PageHeader title="Ангилал, цуглуулга" description="Ангилал нь барааны төрөл (футболк, жинс…). Цуглуулга нь худалдааны сонголт (өвлийн цуглуулга, суурь хувцас…)." />
+      <PageHeader title="Ангилал, цуглуулга" description="Ангилал нь барааны төрөл (пүүз, ботинк…). Цуглуулга нь худалдааны сонголт (өвлийн бэлтгэл, оффис ба ёслол…)." />
       <div className="grid gap-4 xl:grid-cols-2">
         <Card title="Ангилал">
           <div className="space-y-4 divide-y divide-stone-100">

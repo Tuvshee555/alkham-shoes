@@ -17,7 +17,7 @@ export async function AnnouncementBar() {
   return (
     <div className="bg-ink text-white">
       <div className="container-page flex h-9 items-center justify-center gap-6 text-[11.5px] tracking-[0.04em] sm:justify-between">
-        <span className="hidden text-white/60 sm:inline">Портфолио демо — зохиомол брэнд</span>
+        <span className="hidden text-white/60 sm:inline">Портфолио демо — зохиомол дэлгүүр</span>
         <p className="truncate text-center">
           {info.announcementEnabled ? (
             <>
@@ -43,8 +43,8 @@ async function CartCount() {
 
 export async function Header() {
   const nav = await getNavigation()
-  const featured = nav.collections.find((c) => c.slug === 'winter-edit') ?? nav.collections[0]
-  const navLink = 'link-underline py-1 text-[12.5px] uppercase tracking-[0.12em]'
+  const featured = nav.collections.find((c) => c.slug === 'winter') ?? nav.collections[0]
+  const navLink = 'link-underline py-1 text-[14px] font-medium'
   return (
     <header className="sticky top-0 z-40 border-b border-stone-200 bg-paper/95 backdrop-blur-md">
       <div className="container-page grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4">
@@ -54,11 +54,11 @@ export async function Header() {
             <Link href="/collections/new" className={navLink}>
               Шинэ
             </Link>
-            <Link href="/collections/women" className={navLink}>
-              Эмэгтэй
+            <Link href="/shop/sneakers" className={navLink}>
+              Пүүз
             </Link>
-            <Link href="/collections/men" className={navLink}>
-              Эрэгтэй
+            <Link href="/shop/boots" className={navLink}>
+              Ботинк
             </Link>
             <div className="group flex h-16 items-center">
               <Link href="/shop" className={navLink} aria-haspopup="true">
@@ -107,13 +107,13 @@ export async function Header() {
                 </div>
               </div>
             </div>
-            <Link href="/about" className={navLink}>
-              Брэнд
+            <Link href="/shop/kids" className={navLink}>
+              Хүүхэд
             </Link>
           </nav>
         </div>
 
-        <Link href="/" className="wordmark pl-[0.42em] text-[19px] sm:text-[21px]" aria-label={`${BRAND.name} нүүр хуудас`}>
+        <Link href="/" className="wordmark text-[19px] sm:text-[22px]" aria-label={`${BRAND.name} нүүр хуудас`}>
           {BRAND.name}
         </Link>
 

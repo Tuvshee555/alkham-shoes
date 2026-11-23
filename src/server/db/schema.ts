@@ -23,7 +23,7 @@ import {
   type AnyPgColumn,
 } from 'drizzle-orm/pg-core'
 
-export const store = pgSchema('store')
+export const store = pgSchema('alkham')
 
 const createdAt = () => timestamp({ withTimezone: true }).notNull().defaultNow()
 const updatedAt = () =>

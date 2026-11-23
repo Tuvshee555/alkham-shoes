@@ -25,6 +25,7 @@ import {
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { BRAND } from '@/lib/brand'
 import { cn } from '@/lib/cn'
 
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }
@@ -115,7 +116,7 @@ export function AdminMobileNav({ badges, footer }: { badges: Record<string, numb
           <div className="absolute inset-0 bg-ink/40" onClick={() => setOpen(false)} aria-hidden />
           <div className="absolute inset-y-0 left-0 flex w-72 flex-col overflow-y-auto bg-white p-3">
             <div className="mb-3 flex items-center justify-between px-2">
-              <span className="wordmark text-sm">MANAN</span>
+              <span className="wordmark text-sm">{BRAND.name}</span>
               <button type="button" onClick={() => setOpen(false)} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-paper-2" aria-label="Хаах">
                 <X className="h-5 w-5" />
               </button>

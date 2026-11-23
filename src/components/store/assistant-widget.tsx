@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useCartDrawer } from '@/components/store/cart-drawer'
 import { Spinner } from '@/components/ui/feedback'
+import { STORE_VOICE } from '@/lib/store-voice'
 import type { ChatAction, ChatView, PublicChatMessage } from '@/lib/assistant/types'
 import { cn } from '@/lib/cn'
 import { formatMoney } from '@/lib/money'
@@ -14,8 +15,8 @@ import { addToCartAction } from '@/server/actions/store'
 
 // The conversation id is not a secret: the conversation belongs to this
 // browser's httpOnly visitor cookie, which the server checks on every request.
-const STORAGE_KEY = 'manan.assistant.conversation'
-const STARTERS = ['Ямар hoodie байна?', 'Хар hoodie L размер байгаа юу?', '200,000₮-өөс доош ямар цамц байна?', 'Хүргэлт хэд хоног вэ?', 'Яаж захиалах вэ?']
+const STORAGE_KEY = 'alkham.assistant.conversation'
+const STARTERS = STORE_VOICE.starters
 /** While a person is involved the widget checks for replies: 5 s, slowing to 30 s, for at most 10 minutes. */
 const POLL_START_MS = 5_000
 const POLL_MAX_MS = 30_000
@@ -134,7 +135,7 @@ export function ChatThread({
     <div ref={listRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4 text-[13.5px] leading-relaxed" aria-live="polite">
       {messages.length === 0 && (
         <>
-          <div className="max-w-[92%] bg-white px-3.5 py-3">Сайн байна уу! Бараа, өнгө, хэмжээ, үлдэгдэл, хүргэлт, буцаалтын талаар асуугаарай. Би дэлгүүрийн сангаас шалгаж хариулна.</div>
+          <div className="max-w-[92%] bg-white px-3.5 py-3">Сайн байна уу! Гутал, өнгө, размер, үлдэгдэл, хүргэлт, буцаалтын талаар асуугаарай. Би дэлгүүрийн сангаас шалгаж хариулна.</div>
           <div className="flex flex-wrap gap-2">
             {STARTERS.map((s) => (
               <button key={s} type="button" onClick={() => onSend(s)} className="border border-stone-300 bg-paper px-3 py-1.5 text-left text-[12.5px] hover:border-ink">
@@ -147,7 +148,7 @@ export function ChatThread({
       {messages.map((m) => (
         <div key={m.id} className={cn('flex flex-col', m.role === 'customer' ? 'items-end' : 'items-start')}>
           {m.role === 'staff' && (
-            <span className="mb-1 inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.1em] text-accent">
+            <span className="mb-1 inline-flex items-center gap-1 text-[12px] font-semibold text-accent">
               <UserRound className="h-3 w-3" /> Ажилтан
             </span>
           )}
@@ -349,7 +350,7 @@ export function AssistantWidget({ storeName }: { storeName: string }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-ink px-4 py-3 text-[12px] font-medium uppercase tracking-[0.12em] text-white shadow-lg transition hover:bg-charcoal sm:bottom-6 sm:right-6"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-accent px-4 py-3 text-[13.5px] font-semibold text-white shadow-lg transition hover:bg-accent-600 sm:bottom-6 sm:right-6"
           aria-label="Худалдааны туслах нээх"
         >
           <MessageCircle className="h-4 w-4" strokeWidth={1.6} /> Туслах
@@ -412,7 +413,7 @@ export function AssistantWidget({ storeName }: { storeName: string }) {
                     send(input)
                   }
                 }}
-                placeholder="Жишээ: хар hoodie L размер байгаа юу?"
+                placeholder={STORE_VOICE.inputPlaceholder}
                 className="max-h-28 min-h-6 flex-1 resize-none bg-transparent text-[13.5px] outline-none placeholder:text-stone-500"
               />
               <button type="submit" disabled={pending || !input.trim()} className="grid h-8 w-8 shrink-0 place-items-center bg-ink text-white disabled:opacity-30" aria-label="Илгээх">

@@ -8,16 +8,16 @@ import { BRAND } from '@/lib/brand'
 import { EDITORIAL } from '@/lib/editorial'
 
 export const metadata: Metadata = {
-  title: 'Брэндийн тухай',
-  description: `${BRAND.name} — чимээгүй тансаг өдөр тутмын хувцасны зохиомол брэнд, ${BRAND.agencyName}-ын портфолио демо.`,
+  title: 'Дэлгүүрийн тухай',
+  description: `${BRAND.name} — пүүз, ботинк, туфлийн зохиомол гутлын дэлгүүр, ${BRAND.agencyName}-ын портфолио демо.`,
   alternates: { canonical: '/about' },
 }
 
 const FEATURES = [
-  ['Хэмжээ, өнгө тус бүрийн үлдэгдэл', 'Хувилбар бүр өөрийн SKU, үлдэгдэлтэй. Худалдан авагч зөвхөн байгаа хэмжээгээ авна.'],
+  ['Размер, өнгө тус бүрийн үлдэгдэл', 'Хувилбар бүр өөрийн SKU, үлдэгдэлтэй. Худалдан авагч зөвхөн байгаа размераа авна.'],
   ['Найдвартай захиалга', 'Үнэ, хүргэлтийн төлбөр, нийт дүнг сервер тооцоолж, барааг гүйлгээний дотор нөөцөлнө — нэг барааг хоёр хүн зэрэг авахгүй.'],
   ['Удирдлагын самбар', 'Бүтээгдэхүүн, хувилбар, үлдэгдэл, захиалга, харилцагч, тохиргоог нэг дороос.'],
-  ['Худалдааны туслах', 'Сангаас бараа хайж, үнэ, хэмжээ, үлдэгдлийг шалгаж хариулна. Мэдэхгүй зүйлээ зохиохгүй.'],
+  ['Худалдааны туслах', 'Сангаас гутал хайж, үнэ, размер, үлдэгдлийг шалгаж хариулна. Хөлийн уртаар размер зөвлөнө. Мэдэхгүй зүйлээ зохиохгүй.'],
   ['QPay-д бэлэн', 'QPay холболт бэлэн. Демо нь бодит мөнгө авахгүй симуляц горимд ажиллана.'],
 ]
 
@@ -26,28 +26,27 @@ export default function AboutPage() {
     <>
       <section className="container-page grid items-center gap-12 pt-10 sm:pt-14 lg:grid-cols-2">
         <div>
-          <p className="eyebrow text-stone-600">Брэнд</p>
-          <h1 className="display mt-3 text-[44px] sm:text-[64px]">Манан шиг зөөлөн, чимээгүй</h1>
+          <h1 className="display text-[40px] sm:text-[60px]">Алхам бүрт тохирно</h1>
           <div className="prose-store mt-6 max-w-xl text-[15.5px] leading-relaxed text-charcoal">
             <p>
-              {BRAND.name} («манан») бол хотын хэмнэлд зориулсан, өдөр бүр өмсөх тансаг хувцасны брэнд. Бид чанга лого, түр зуурын моодоос илүү
-              материал, зүсэлт, тохь тухыг чухалчилдаг: Монгол ноолуур, нягт хөвөн, удаан эдэлгээтэй арьс.
+              {BRAND.name} («алхам») бол Улаанбаатарын гудамж, өвөл, ажлын өдөрт зориулсан гутлын дэлгүүр. Пүүз, ботинк, өсгийтэй гутал, туфли,
+              гэрийн шаахай, хүүхдийн гутал — бүгд размер, өнгө тус бүрийн бодит үлдэгдэлтэй.
             </p>
-            <p>Өнгө нь хоорондоо зохицно. Үнэ нь шударга бөгөөд байнгын. Хуурамч хямдрал, «хуучин үнэ» байхгүй.</p>
+            <p>Гутлыг өмсөж үзэлгүй авахад хэцүү. Тиймээс хүргэгч хаалган дээр хүлээж байхад өмсөж үзнэ, размер таарахгүй бол 14 хоногт нэг удаа үнэгүй солино.</p>
           </div>
         </div>
         <div className="relative aspect-[4/5] bg-bone">
-          <Image src={EDITORIAL.heroRight.src} alt={EDITORIAL.heroRight.alt} fill priority sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+          <Image src={EDITORIAL.leaves.src} alt={EDITORIAL.leaves.alt} fill priority sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
         </div>
       </section>
 
       <section className="mt-24 bg-ink text-white">
         <div className="container-page grid gap-12 py-20 lg:grid-cols-[1fr_1.2fr]">
           <div>
-            <p className="eyebrow text-white/60">Портфолио демо</p>
-            <h2 className="display mt-3 text-[36px] sm:text-[48px]">Энэ дэлгүүр бодит биш — систем нь бодит</h2>
+            <p className="eyebrow text-label">Портфолио демо</p>
+            <h2 className="display mt-3 text-[32px] sm:text-[44px]">Энэ дэлгүүр бодит биш — систем нь бодит</h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/75">
-              {BRAND.name} бол {BRAND.agencyName}-ын бүтээсэн зохиомол брэнд. Бүтээгдэхүүн, үнэ, үлдэгдэл, жишээ захиалга бүгд жишээ өгөгдөл бөгөөд
+              {BRAND.name} бол {BRAND.agencyName}-ын бүтээсэн зохиомол дэлгүүр. Бүтээгдэхүүн, үнэ, үлдэгдэл, жишээ захиалга бүгд жишээ өгөгдөл бөгөөд
               бодит худалдаа, төлбөр, хүргэлт хийгдэхгүй. Харин сан, захиалга, үлдэгдэл, удирдлагын самбар, туслах нь жинхэнэ ажилладаг.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

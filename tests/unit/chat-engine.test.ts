@@ -123,12 +123,16 @@ describe('clothing colours and sizes', () => {
     expect(sizes('ene l bol sain baraa shig bn daa')).toEqual([])
   })
 
-  it('shoe words: «гутал» means the whole category, a kind of shoe goes by name', () => {
+  it('shoe words: «гутал» means every kind of shoe, a kind of shoe its own category', () => {
     const garments = (s: string) => understand(s).garments
-    expect(garments('Гутал байна уу?')).toEqual([{ word: 'гутал', categories: ['shoes'] }])
-    expect(garments('gutal bga yu')).toEqual([{ word: 'гутал', categories: ['shoes'] }])
-    expect(garments('puuz hed ve')).toEqual([{ word: 'пүүз', categories: [] }])
-    expect(garments('Арьсан ботинк 42 байгаа юу')).toEqual([{ word: 'ботинк', categories: [] }])
+    const allShoes = ['shoes', 'sneakers', 'boots', 'heels', 'formal', 'flats']
+    expect(garments('Гутал байна уу?')).toEqual([{ word: 'гутал', categories: allShoes }])
+    expect(garments('gutal bga yu')).toEqual([{ word: 'гутал', categories: allShoes }])
+    expect(garments('puuz hed ve')).toEqual([{ word: 'пүүз', categories: ['sneakers'] }])
+    expect(garments('Арьсан ботинк 42 байгаа юу')).toEqual([{ word: 'ботинк', categories: ['boots'] }])
+    // Children's shoes, not every shoe plus every children's item.
+    expect(garments('huuhdiin gutal bga yu')).toEqual([{ word: 'хүүхдийн гутал', categories: ['kids'] }])
+    expect(garments('Хүүхдийн пүүз байна уу')).toEqual([{ word: 'хүүхдийн пүүз', categories: ['kids'] }])
   })
 })
 

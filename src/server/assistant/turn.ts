@@ -13,6 +13,7 @@
 //   6. search / browse with filters (type, price limit, colour, size, season, audience)
 //   7. AI behind the fact check (open questions, recommendations, unread phrasing)
 //   8. an honest fallback that offers a person. Never silence, never an invented fact.
+import { STORE_VOICE } from '@/lib/store-voice'
 import type { ChatAction } from '@/lib/assistant/types'
 import { sizeLabel, TAG_LABELS } from '@/lib/catalog'
 import { sortCatalog, type CatalogProduct } from '@/lib/catalog-filter'
@@ -291,9 +292,9 @@ export async function runTurn(input: TurnInput): Promise<TurnOutput> {
     const first = !input.history.some((m) => m.role === 'user')
     return done({
       ...empty,
-      text: first ? `${tc.settings.greeting}${focusProduct ? `\nТа одоо ${link(focusProduct)}-г үзэж байна — өнгө, хэмжээ, үлдэгдлийг нь асууж болно.` : ''}` : 'Сайн байна уу! Юугаар туслах вэ?',
+      text: first ? `${tc.settings.greeting}${focusProduct ? `\nТа одоо ${link(focusProduct)}-г үзэж байна — өнгө, размер, үлдэгдлийг нь асууж болно.` : ''}` : 'Сайн байна уу! Юугаар туслах вэ?',
       intent: 'greeting',
-      suggestions: ['Ямар hoodie байна?', 'Хар hoodie L размер байгаа юу?', '200,000₮-өөс доош ямар цамц байна?', 'Хүргэлт хэд хоног вэ?'],
+      suggestions: STORE_VOICE.starters.slice(0, 4),
     })
   }
 
@@ -310,9 +311,9 @@ export async function runTurn(input: TurnInput): Promise<TurnOutput> {
   }
 
   // ── 5. Product answers ──
-  // There is no children's line: "хүүхдийн гутал" is not in the catalogue, though a product is
-  // named "…гутал". Say so instead of offering the adult one.
-  if (u.kids) return done({ ...fallbackAnswer(tc, u, focusProduct, state), intent: 'fallback' })
+  // A shop without a children's line: "хүүхдийн гутал" is not in the catalogue, though a product
+  // may be named "…гутал". Say so instead of offering the adult one.
+  if (u.kids && !tc.categories.some((c) => c.slug === 'kids')) return done({ ...fallbackAnswer(tc, u, focusProduct, state), intent: 'fallback' })
   const withPolicy = (a: Answer): Answer => (u.policy && u.policy !== 'size_guide' ? { ...a, text: `${a.text}\n\n${policyAnswer(tc, u.policy).text}` } : a)
   if (product && !searching) {
     const t = q.topics
@@ -380,7 +381,7 @@ export async function runTurn(input: TurnInput): Promise<TurnOutput> {
       text: `Манайд ${catalog.length} бараа ${cats.length} ангилалд байна:\n${cats.map((c) => `- [${c.name}](/shop/${c.slug}) — ${c.productCount} бараа${c.priceFrom ? `, ${money(c.priceFrom)}-өөс` : ''}`).join('\n')}\nАль төрлийг сонирхож байна вэ?`,
       intent: 'catalog',
       events: ['search'],
-      suggestions: ['Ямар hoodie байна?', 'Өвөлд ямар хувцас тохирох вэ?'],
+      suggestions: [...STORE_VOICE.browse],
     })
   }
 

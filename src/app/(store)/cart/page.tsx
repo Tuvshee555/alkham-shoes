@@ -18,7 +18,7 @@ async function CartBody() {
   if (cart.lines.length === 0) {
     return (
       <EmptyState title="Таны сагс хоосон байна" action={<Link href="/shop" className={buttonClass('primary')}>Дэлгүүр үзэх</Link>}>
-        Таалагдсан бараагаа өнгө, хэмжээгээр нь сонгоод сагсандаа нэмээрэй.
+        Таалагдсан гутлаа өнгө, размераар нь сонгоод сагсандаа нэмээрэй.
       </EmptyState>
     )
   }

@@ -131,7 +131,7 @@ const POLICY: [PolicyTopic, RegExp][] = [
   ['payment', /(?:төлбөр|төлөх|qpay|карт(?:аар)?|бэлнээр|бэлэн\s+мөнгө|payment|\bpay\b)/iu],
   ['contact', /(?:холбоо\s+барих|утас\S*\s+дугаар|и-?мэйл|хаяг\S*\s+(?:хаана|юу)|дэлгүүр\S*\s+хаана|салбар|шоурум|contact|phone\s+number|where\s+are\s+you)/iu],
   ['privacy', /(?:нууцлал|хувийн\s+мэдээлэл|privacy)/iu],
-  ['about', /(?:та\s+нар\s+хэн|танай\s+(?:компани|брэнд)|бодит\s+дэлгүүр|about\s+(?:you|the\s+brand)|who\s+are\s+you)/iu],
+  ['about', /(?:та\s+нар\s+хэн|танай\s+(?:компани|брэнд)|танай\s+дэлгүүр\s+юу\s+(?:вэ|бэ)|(?:энэ|танай)\s+ямар\s+дэлгүүр|бодит\s+дэлгүүр|about\s+(?:you|the\s+brand)|who\s+are\s+you)/iu],
 ]
 
 const TAG_PATTERNS: [string, RegExp][] = [

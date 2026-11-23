@@ -1,41 +1,43 @@
 @import 'tailwindcss';
 
 /*
- * MANAN design tokens — warm ivory paper, ink and charcoal, stone neutrals,
- * one restrained oxblood accent. Sharp corners, hairline rules, generous space.
- * Contrast: ink on paper ≈ 17:1, stone-600 on paper ≈ 4.8:1, white on ink ≈ 18:1.
+ * ALKHAM design tokens — cool sidewalk greys, near-black ink, one cobalt accent
+ * and a shoebox-label yellow used only on sizes. Unbounded for display, Golos
+ * Text for everything else. Contrast: ink on paper ≈ 17:1, stone-600 on paper
+ * ≈ 5.6:1, white on accent ≈ 7.4:1.
  */
 @theme {
-  --font-sans: var(--font-jost), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: var(--font-serif-display), ui-serif, Georgia, serif;
+  --font-sans: var(--font-golos), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
 
-  --color-paper: #f7f4ef;
-  --color-paper-2: #f1ece4;
-  --color-bone: #e9e2d7;
-  --color-stone-200: #e2dbd0;
-  --color-stone-300: #d2c9bc;
-  --color-stone-400: #b3a99c;
-  --color-stone-500: #8f877c;
-  --color-stone-600: #6c655d;
-  --color-charcoal: #2c2a27;
-  --color-ink: #161514;
+  --color-paper: #eceef0;
+  --color-paper-2: #e2e5e8;
+  --color-bone: #d6dadf;
+  --color-stone-200: #cbd0d6;
+  --color-stone-300: #b6bcc4;
+  --color-stone-400: #979ea7;
+  --color-stone-500: #767e88;
+  --color-stone-600: #565e68;
+  --color-charcoal: #22262c;
+  --color-ink: #0e1115;
   --color-white: #ffffff;
 
-  --color-accent: #7a3428;
-  --color-accent-600: #692b21;
-  --color-accent-soft: #f2e5de;
+  --color-accent: #2340e0;
+  --color-accent-600: #1b33b8;
+  --color-accent-soft: #e1e6fc;
+  --color-label: #f2ce3a;
 
-  --color-success: #3f5a3a;
-  --color-success-soft: #e7eee2;
+  --color-success: #2f6b3f;
+  --color-success-soft: #e2efe5;
   --color-warning: #8a5a12;
   --color-warning-soft: #f6ecd8;
-  --color-danger: #9b2c2c;
-  --color-danger-soft: #f7e3e1;
-  --color-info: #33506e;
-  --color-info-soft: #e3eaf2;
+  --color-danger: #a52a2a;
+  --color-danger-soft: #f7e2e0;
+  --color-info: #2c4f78;
+  --color-info-soft: #e1e9f3;
 
-  --tracking-label: 0.14em;
-  --tracking-wordmark: 0.42em;
+  --tracking-label: 0.12em;
+  --tracking-wordmark: 0.02em;
 
   --animate-fade-in: fade-in 220ms ease-out;
   --animate-slide-in: slide-in 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -98,7 +100,7 @@
     -moz-appearance: textfield;
   }
   dialog::backdrop {
-    background: rgb(22 21 20 / 0.45);
+    background: rgb(14 17 21 / 0.45);
   }
   summary {
     cursor: pointer;
@@ -111,21 +113,38 @@
 @layer components {
   .display {
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.015em;
-    line-height: 1.04;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
   }
   .wordmark {
-    font-family: var(--font-sans);
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-weight: 800;
     letter-spacing: var(--tracking-wordmark);
     text-transform: uppercase;
   }
+  /* A shoebox label: the size run, printed in black on yellow. */
+  .size-chip {
+    display: inline-grid;
+    place-items: center;
+    min-width: 3rem;
+    height: 3rem;
+    border: 1.5px solid var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+  .size-chip:hover,
+  .size-chip:focus-visible {
+    background: var(--color-label);
+  }
+  /* Small section labels: sentence case, never tracked capitals. */
   .eyebrow {
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0;
   }
   .container-page {
     margin-inline: auto;

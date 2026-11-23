@@ -1,31 +1,34 @@
-import { ArrowRight, MessageCircle, Repeat2, Truck } from 'lucide-react'
+import { ArrowRight, DoorOpen, MessageCircle, Truck } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { FootSizeFinder } from '@/components/store/foot-size-finder'
 import { ProductCard } from '@/components/store/product-card'
 import { buttonClass } from '@/components/ui/button'
 import { BRAND } from '@/lib/brand'
+import { compareSizes } from '@/lib/catalog'
 import type { CatalogProduct } from '@/lib/catalog-filter'
 import { EDITORIAL } from '@/lib/editorial'
 import { formatMoney } from '@/lib/money'
+import { footSizes } from '@/lib/size-chart'
 import { getBestsellerIds, getCatalog, getNavigation } from '@/server/queries/catalog'
 import { getStoreContent } from '@/server/queries/settings'
 
 export const metadata: Metadata = {
   title: { absolute: `${BRAND.name} — ${BRAND.tagline}` },
-  description: 'Ноолуур, нягт хөвөн, цэвэр зүсэлттэй өдөр тутмын тансаг хувцас. Хэмжээ, өнгө тус бүрийн үлдэгдэл бодит цагт. (Портфолио демо)',
+  description: 'Пүүз, ботинк, өсгийтэй гутал, туфли, хүүхдийн гутал. Размер, өнгө тус бүрийн үлдэгдэл бодит цагт. (Портфолио демо)',
   alternates: { canonical: '/' },
 }
 
-function SectionHeading({ eyebrow, title, href, linkLabel }: { eyebrow?: string; title: string; href?: string; linkLabel?: string }) {
+/** Adult sizes on the hero's size run (the kids' range has its own link). */
+const ADULT_RUN = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45']
+
+function SectionHeading({ title, href, linkLabel }: { title: string; href?: string; linkLabel?: string }) {
   return (
-    <div className="mb-8 flex items-end justify-between gap-6">
-      <div>
-        {eyebrow && <p className="eyebrow mb-2 text-stone-600">{eyebrow}</p>}
-        <h2 className="display text-[30px] sm:text-[40px]">{title}</h2>
-      </div>
+    <div className="mb-7 flex items-end justify-between gap-6">
+      <h2 className="display text-[28px] sm:text-[38px]">{title}</h2>
       {href && (
-        <Link href={href} className="link-underline hidden shrink-0 items-center gap-1.5 pb-1 text-[12px] uppercase tracking-[0.12em] sm:inline-flex">
+        <Link href={href} className="link-underline hidden shrink-0 items-center gap-1.5 pb-1 text-[14px] font-semibold sm:inline-flex">
           {linkLabel ?? 'Бүгдийг үзэх'} <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       )}
@@ -55,190 +58,220 @@ export default async function HomePage() {
     .map((id) => catalog.find((p) => p.id === id))
     .filter((p): p is CatalogProduct => !!p)
     .slice(0, 4)
-  const essentials = catalog.filter((p) => p.collectionSlugs.includes('essentials')).slice(0, 3)
-  const featured = nav.collections.filter((c) => c.isFeatured).slice(0, 3)
+  const winter = catalog.filter((p) => p.collectionSlugs.includes('winter')).slice(0, 3)
+  const tiles = nav.categories.map((c) => {
+    const items = catalog.filter((p) => p.categorySlug === c.slug)
+    return { ...c, count: items.length, image: items[0]?.images[0] ?? null }
+  })
+  const kidsSizes = [...new Set(catalog.filter((p) => p.categorySlug === 'kids').flatMap((p) => p.sizes))].sort(compareSizes)
+  const collections = nav.collections.filter((c) => c.isFeatured && c.slug !== 'winter').slice(0, 2)
   const freeFrom = content.shipping.find((s) => s.region === 'ub' && s.freeThreshold)?.freeThreshold
+  const feet = footSizes(content.sizeGuide)
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative">
-        <div className="grid h-[calc(100svh-6.25rem)] max-h-[880px] min-h-[540px] grid-cols-1 md:grid-cols-2">
-          <div className="relative hidden md:block">
-            <Image src={EDITORIAL.heroLeft.src} alt={EDITORIAL.heroLeft.alt} fill priority sizes="50vw" className="object-cover" />
+      {/* Hero: the size run is the way in */}
+      <section className="border-b border-stone-200">
+        <div className="mx-auto grid max-w-[90rem] lg:min-h-[calc(100svh-6.25rem)] lg:grid-cols-[1.05fr_1fr]">
+          <div className="relative order-1 aspect-[5/4] bg-label sm:aspect-[16/10] lg:order-2 lg:aspect-auto">
+            <Image src={EDITORIAL.hero.src} alt={EDITORIAL.hero.alt} fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-[50%_70%]" />
           </div>
-          <div className="relative">
-            <Image src={EDITORIAL.heroRight.src} alt={EDITORIAL.heroRight.alt} fill priority sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
-          </div>
-        </div>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/65 via-ink/10 to-transparent md:from-ink/55 md:via-transparent" />
-        <div className="absolute inset-x-0 bottom-0">
-          <div className="container-page pb-10 sm:pb-14">
-            <p className="eyebrow animate-rise text-white/85">Намар — Өвөл 2026</p>
-            <h1 className="display mt-3 max-w-3xl animate-rise text-[44px] text-white [animation-delay:80ms] sm:text-[64px] lg:text-[84px]">{BRAND.tagline}</h1>
-            <p className="mt-4 max-w-md animate-rise text-[15px] leading-relaxed text-white/85 [animation-delay:160ms]">
-              Зөөлөн ноолуур, нягт хөвөн, цэвэр зүсэлт. Хотын хэмнэлд зориулсан, удаан эдэлгээтэй өдөр тутмын хувцас.
+          <div className="order-2 flex flex-col justify-center px-4 py-10 sm:px-6 sm:py-14 lg:order-1 lg:px-10 lg:py-16">
+            <h1 className="display max-w-[12ch] animate-rise text-[40px] sm:text-[60px] xl:text-[76px]">{BRAND.tagline}</h1>
+            <p className="mt-5 max-w-md animate-rise text-[16px] leading-relaxed text-charcoal [animation-delay:80ms]">
+              Пүүз, ботинк, туфли, хүүхдийн гутал. Размер бүрийн үлдэгдэл бодит цагт харагдана, хүргэгч хаалган дээр хүлээж байхад өмсөж үзнэ.
             </p>
-            <div className="mt-7 flex animate-rise flex-wrap gap-3 [animation-delay:240ms]">
-              <Link href="/collections/new" className={buttonClass('light', 'lg')}>
-                Шинэ ирэлт үзэх
-              </Link>
-              <Link href="/collections/winter-edit" className={buttonClass('outline', 'lg', 'border-white text-white hover:bg-white hover:text-ink')}>
-                Өвлийн цуглуулга
-              </Link>
+            <div className="mt-9 animate-rise [animation-delay:160ms]">
+              <p className="text-[14px] font-semibold">Размераа сонго — зөвхөн таны размерт байгаа гутал харагдана</p>
+              <ul className="mt-3 grid grid-cols-5 gap-2 sm:flex sm:flex-wrap" aria-label="Размераар үзэх">
+                {ADULT_RUN.map((size) => (
+                  <li key={size}>
+                    <Link href={`/shop?size=${size}&stock=1`} className="size-chip w-full sm:w-auto" aria-label={`${size} размертай, бэлэн байгаа гутал`}>
+                      {size}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
+                {kidsSizes.length > 0 && (
+                  <Link href="/shop/kids" className="link-underline inline-flex items-center gap-1.5 font-medium">
+                    Хүүхдийн гутал, {kidsSizes[0]}–{kidsSizes[kidsSizes.length - 1]} <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                )}
+                <a href="#foot-size" className="link-underline font-medium text-stone-600">
+                  Размераа мэдэхгүй байна уу?
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Service strip */}
-      <section className="border-b border-stone-200 bg-paper-2">
-        <div className="container-page grid gap-4 py-5 text-[13px] text-charcoal sm:grid-cols-3">
+      <section className="border-b border-stone-200 bg-white">
+        <div className="container-page grid gap-4 py-5 text-[14px] text-charcoal sm:grid-cols-3">
           <p className="flex items-center gap-3">
-            <Truck className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+            <Truck className="h-4 w-4 shrink-0" strokeWidth={1.6} />
             {freeFrom ? `Улаанбаатарт ${formatMoney(freeFrom)}-өөс дээш үнэгүй хүргэлт` : 'Улаанбаатар, орон нутагт хүргэлттэй'}
           </p>
           <p className="flex items-center gap-3">
-            <Repeat2 className="h-4 w-4 shrink-0" strokeWidth={1.5} />
-            14 хоногийн дотор хэмжээ солих боломжтой
+            <DoorOpen className="h-4 w-4 shrink-0" strokeWidth={1.6} />
+            Хаалган дээр өмсөж үзээд, таарахгүй бол буцаана
           </p>
           <p className="flex items-center gap-3">
-            <MessageCircle className="h-4 w-4 shrink-0" strokeWidth={1.5} />
-            Туслах хэмжээ, үлдэгдлийг сангаас шууд шалгана
+            <MessageCircle className="h-4 w-4 shrink-0" strokeWidth={1.6} />
+            Туслах размер, үлдэгдлийг сангаас шууд шалгана
           </p>
         </div>
       </section>
+
+      {/* Categories */}
+      {tiles.length > 0 && (
+        <section className="container-page pt-16 sm:pt-20">
+          <SectionHeading title="Ямар гутал хайж байна?" href="/shop" linkLabel="Бүх гутал" />
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {tiles.map((c) => (
+              <li key={c.slug}>
+                <Link href={`/shop/${c.slug}`} className="group block bg-white">
+                  <div className="relative aspect-square overflow-hidden bg-paper-2">
+                    {c.image && (
+                      <Image src={c.image.url} alt={c.image.alt} fill sizes="(min-width: 1024px) 15vw, (min-width: 640px) 31vw, 48vw" className="object-cover transition duration-500 group-hover:scale-[1.04]" />
+                    )}
+                  </div>
+                  <div className="flex items-baseline justify-between gap-2 px-3 py-3">
+                    <span className="font-display text-[15px] font-semibold">{c.name}</span>
+                    <span className="text-[13px] text-stone-600">{c.count}</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* New arrivals */}
       {newArrivals.length > 0 && (
         <section className="container-page pt-20">
-          <SectionHeading eyebrow="Шинэ ирэлт" title="Энэ улирлын шинэ загварууд" href="/collections/new" />
+          <SectionHeading title="Шинэ ирэлт" href="/collections/new" />
           <ProductRow products={newArrivals} />
         </section>
       )}
 
-      {/* Featured collections */}
-      {featured.length > 0 && (
-        <section className="container-page pt-24">
-          <SectionHeading eyebrow="Цуглуулга" title="Онцлох цуглуулгууд" />
-          <div className="grid gap-4 md:grid-cols-3">
-            {featured.map((c, i) => (
-              <Link key={c.slug} href={`/collections/${c.slug}`} className="group relative block aspect-[4/5] overflow-hidden bg-bone md:aspect-[3/4]">
-                {c.imageUrl && (
-                  <Image src={c.imageUrl} alt={c.name} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition duration-[900ms] ease-out group-hover:scale-[1.04]" priority={i === 0} />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                  {c.eyebrow && <p className="eyebrow text-white/80">{c.eyebrow}</p>}
-                  <p className="display mt-1 text-3xl">{c.name}</p>
-                  <p className="mt-3 inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.12em] text-white/90">
-                    Үзэх <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Best sellers */}
-      {bestsellers.length > 0 && (
-        <section className="container-page pt-24">
-          <SectionHeading eyebrow="Их захиалагддаг" title="Хамгийн их сонгогддог" href="/shop" />
-          <ProductRow products={bestsellers} />
-          <p className="mt-6 text-[12px] text-stone-600">Демо: эрэмбэ нь сангийн жишээ захиалгад тулгуурласан.</p>
-        </section>
-      )}
-
-      {/* Campaign */}
+      {/* Winter */}
       <section className="mt-24 bg-ink text-white">
         <div className="grid lg:grid-cols-[1.35fr_1fr]">
-          <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[640px]">
-            <Image src={EDITORIAL.winterWide.src} alt={EDITORIAL.winterWide.alt} fill sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" />
+          <div className="relative aspect-[3/2] lg:aspect-auto lg:min-h-[600px]">
+            <Image src={EDITORIAL.winter.src} alt={EDITORIAL.winter.alt} fill sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" />
           </div>
-          <div className="flex flex-col justify-between gap-10 p-8 sm:p-12 lg:p-16">
+          <div className="flex flex-col justify-center gap-8 p-6 sm:p-12 lg:p-14">
             <div>
-              <p className="eyebrow text-white/60">Кампанит ажил · Өвөл 2026</p>
-              <h2 className="display mt-4 text-[38px] sm:text-[52px]">Цасан дундах чимээгүй</h2>
-              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/75">
-                Хасах 30 хэмд ч өөрийн дүр төрхөө алдахгүй. Давхар нэхмэл ноос, нягт дулаалга, хүзүү нөмрөх ороолт — Улаанбаатарын өвөлд зориулсан цуглуулга.
+              <h2 className="display text-[34px] sm:text-[48px]">Хасах 30 хэмд бэлэн</h2>
+              <p className="mt-5 max-w-md text-[15.5px] leading-relaxed text-white/75">
+                Ноосон доторлогоо, ус түлхэгч арьс, мөсөн дээр гулгахгүй ул. Улаанбаатарын өвөлд зориулж сонгосон ботинкууд.
               </p>
-              <Link href="/collections/winter-edit" className={buttonClass('light', 'lg', 'mt-8')}>
-                Өвлийн цуглуулга
-              </Link>
             </div>
-            <div className="relative ml-auto hidden aspect-[4/5] w-56 sm:block">
-              <Image src={EDITORIAL.winterPortrait.src} alt={EDITORIAL.winterPortrait.alt} fill sizes="224px" className="object-cover" />
-            </div>
+            {winter.length > 0 && (
+              <ul className="divide-y divide-white/15 border-y border-white/15">
+                {winter.map((p) => (
+                  <li key={p.id}>
+                    <Link href={`/products/${p.slug}`} className="group flex items-center justify-between gap-4 py-3.5">
+                      <span className="text-[15px] group-hover:underline group-hover:underline-offset-4">{p.name}</span>
+                      <span className="shrink-0 font-display text-[15px] tabular-nums">{formatMoney(p.minPrice)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Link href="/collections/winter" className={buttonClass('light', 'lg', 'self-start')}>
+              Өвлийн гутал үзэх
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Women / Men */}
-      <section className="container-page grid gap-4 pt-24 md:grid-cols-2">
+      {/* Collections + kids */}
+      <section className="container-page grid gap-4 pt-24 md:grid-cols-3">
         {[
-          { href: '/collections/women', label: 'Эмэгтэй', image: EDITORIAL.women },
-          { href: '/collections/men', label: 'Эрэгтэй', image: EDITORIAL.men },
+          ...collections.map((c) => ({ href: `/collections/${c.slug}`, label: c.name, note: c.eyebrow, src: c.imageUrl, alt: c.name })),
+          { href: '/shop/kids', label: 'Хүүхдийн гутал', note: 'Нярайнаас 35 размер хүртэл', src: EDITORIAL.kids.src as string | null, alt: EDITORIAL.kids.alt },
         ].map((tile) => (
-          <Link key={tile.href} href={tile.href} className="group relative block aspect-[4/5] overflow-hidden bg-bone sm:aspect-[5/6]">
-            <Image src={tile.image.src} alt={tile.image.alt} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover transition duration-[900ms] ease-out group-hover:scale-[1.03]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/45 to-transparent" />
-            <div className="absolute bottom-0 left-0 flex w-full items-end justify-between p-6 text-white sm:p-8">
-              <p className="display text-4xl sm:text-5xl">{tile.label}</p>
-              <span className="eyebrow inline-flex items-center gap-1.5">
-                Дэлгүүр <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
-              </span>
+          <Link key={tile.href} href={tile.href} className="group relative block aspect-[4/5] overflow-hidden bg-bone">
+            {tile.src && (
+              <Image src={tile.src} alt={tile.alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition duration-700 ease-out group-hover:scale-[1.03]" />
+            )}
+            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-ink/70 to-transparent p-5 pt-20 text-white sm:p-6 sm:pt-24">
+              <div>
+                {tile.note && <p className="text-[13px] text-white/80">{tile.note}</p>}
+                <p className="display mt-1 text-[26px] sm:text-[30px]">{tile.label}</p>
+              </div>
+              <ArrowRight className="mb-2 h-5 w-5 shrink-0 transition group-hover:translate-x-1" />
             </div>
           </Link>
         ))}
       </section>
 
-      {/* Essentials promotion */}
-      {essentials.length > 0 && (
+      {/* Best sellers */}
+      {bestsellers.length > 0 && (
         <section className="container-page pt-24">
-          <div className="grid gap-8 border border-stone-200 bg-white p-5 sm:p-8 lg:grid-cols-[0.9fr_1.6fr] lg:gap-12">
-            <div className="flex flex-col justify-between gap-8">
-              <div>
-                <p className="eyebrow text-stone-600">Суурь хувцас</p>
-                <h2 className="display mt-3 text-[34px] sm:text-[44px]">Давхарлаж өмсөх үндэс</h2>
-                <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-stone-600">
-                  Өдөр бүр өмсөх, хоорондоо зохицох суурь бараанууд. Үнэ нь байнгын — хуурамч хямдрал, «хуучин үнэ» байхгүй.
-                </p>
-              </div>
-              <Link href="/collections/essentials" className={buttonClass('primary', 'md', 'self-start')}>
-                Суурь хувцас үзэх
+          <SectionHeading title="Их захиалагддаг" href="/shop" />
+          <ProductRow products={bestsellers} />
+          <p className="mt-6 text-[13px] text-stone-600">Демо: эрэмбэ нь сангийн жишээ захиалгад тулгуурласан.</p>
+        </section>
+      )}
+
+      {/* Foot size */}
+      {feet.length > 0 && (
+        <section id="foot-size" className="container-page scroll-mt-24 pt-24">
+          <div className="grid gap-10 bg-paper-2 p-5 sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:p-14">
+            <div>
+              <h2 className="display text-[30px] sm:text-[42px]">Размераа 3 алхамд ол</h2>
+              <ol className="mt-8 space-y-6">
+                {[
+                  'Цаасан дээр өсгийгөө хананд тулган, оймстойгоо зогсоно.',
+                  'Хамгийн урт хурууныхаа үзүүрийг тэмдэглээд, хананаас тэмдэг хүртэлх зайг сантиметрээр хэмжинэ.',
+                  'Хоёр хөлөө хэмжиж, томыг нь оруулна. Хоёр размерын заагт байвал томыг нь авна.',
+                ].map((step, i) => (
+                  <li key={step} className="grid grid-cols-[3rem_1fr] items-start gap-4">
+                    <span className="size-chip pointer-events-none bg-label" aria-hidden>
+                      {i + 1}
+                    </span>
+                    <p className="pt-2.5 text-[15.5px] leading-relaxed text-charcoal">{step}</p>
+                  </li>
+                ))}
+              </ol>
+              <Link href="/size-guide" className="link-underline mt-8 inline-flex items-center gap-1.5 text-[14px] font-semibold">
+                Размерын бүтэн хүснэгт <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {essentials.map((p) => (
-                <ProductCard key={p.id} product={p} sizes="(min-width: 1024px) 18vw, 45vw" />
-              ))}
+            <div className="self-center">
+              <FootSizeFinder sizes={feet} />
             </div>
           </div>
         </section>
       )}
 
-      {/* Brand story */}
+      {/* Store story */}
       <section className="container-page pt-24">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
-          <div className="relative aspect-[4/5] bg-bone lg:aspect-[5/6]">
+          <div className="relative aspect-[5/6] bg-bone">
             <Image src={EDITORIAL.story.src} alt={EDITORIAL.story.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
           </div>
           <div className="max-w-lg">
-            <p className="eyebrow text-stone-600">Брэндийн түүх</p>
-            <h2 className="display mt-3 text-[34px] sm:text-[48px]">Манан шиг зөөлөн, чимээгүй</h2>
-            <div className="prose-store mt-6 text-[15px] leading-relaxed text-charcoal">
-              <p>
-                {BRAND.name} гэдэг нь «манан» — өглөөний хотыг бүрхэх зөөлөн, саарал туяа. Бид чанга лого, түр зуурын моодоос илүү материал, зүсэлт,
-                өдөр бүр өмсөхөд таатай байдлыг эрхэмлэдэг.
-              </p>
-              <p>Цөөн, гэхдээ сайн. Хоорондоо зохицох өнгө, удаан эдэлгээтэй даавуу, шударга үнэ.</p>
+            <h2 className="display text-[30px] sm:text-[44px]">Хаалган дээр өмсөж үзнэ</h2>
+            <div className="prose-store mt-6 text-[15.5px] leading-relaxed text-charcoal">
+              <p>Гутлыг зургаар нь сонгоход хэцүү. Тиймээс хүргэгч хаалган дээр хүлээж байхад өмсөж үзээд, таарахгүй бол тэр дор нь буцааж болно.</p>
+              <p>Гэртээ өмсөөд размер нь таарахгүй байвал 14 хоногийн дотор нэг удаа үнэгүй сольж өгнө.</p>
             </div>
-            <Link href="/about" className="link-underline mt-8 inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.12em]">
-              Брэндийн тухай <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-            <p className="mt-10 border-t border-stone-200 pt-5 text-[12px] leading-relaxed text-stone-600">
-              Анхааруулга: {BRAND.name} бол {BRAND.agencyName}-ын бүтээсэн зохиомол брэнд. Бүтээгдэхүүн, үнэ, үлдэгдэл жишээ өгөгдөл бөгөөд зурагнууд
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+              <Link href="/help/exchange" className="link-underline inline-flex items-center gap-1.5 text-[14px] font-semibold">
+                Размер солих нөхцөл <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link href="/about" className="link-underline inline-flex items-center gap-1.5 text-[14px] font-semibold">
+                Дэлгүүрийн тухай <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            <p className="mt-10 border-t border-stone-200 pt-5 text-[13px] leading-relaxed text-stone-600">
+              Анхааруулга: {BRAND.name} бол {BRAND.agencyName}-ын бүтээсэн зохиомол дэлгүүр. Бараа, үнэ, үлдэгдэл жишээ өгөгдөл бөгөөд зурагнууд
               лицензтэй стокийн гэрэл зураг.
             </p>
           </div>

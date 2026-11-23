@@ -53,12 +53,12 @@ export function ProductCard({
             />
           )}
           <div className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1">
-            {product.isNewArrival && !soldOut && <span className="bg-ink px-2 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-white">Шинэ</span>}
+            {product.isNewArrival && !soldOut && <span className="bg-label px-2 py-1 text-[11.5px] font-semibold text-ink">Шинэ</span>}
             {availability === 'low_stock' && (
-              <span className="bg-paper px-2 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-accent">Цөөн үлдсэн</span>
+              <span className="bg-paper px-2 py-1 text-[11.5px] font-semibold text-accent">Цөөн үлдсэн</span>
             )}
             {soldOut && (
-              <span className="bg-paper px-2 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-stone-600">
+              <span className="bg-paper px-2 py-1 text-[11.5px] font-semibold text-stone-600">
                 {AVAILABILITY_LABELS[availability]}
               </span>
             )}

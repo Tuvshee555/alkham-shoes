@@ -7,7 +7,7 @@ import type { CatalogProduct } from '@/lib/catalog-filter'
 import { formatMoney } from '@/lib/money'
 import { productsBySlugsAction } from '@/server/actions/store'
 
-const KEY = 'manan.recent'
+const KEY = 'alkham.recent'
 
 function readRecent(): string[] {
   try {

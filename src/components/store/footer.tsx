@@ -15,7 +15,7 @@ export async function Footer() {
         <div className="max-w-sm">
           <p className="wordmark text-2xl">{BRAND.name}</p>
           <p className="mt-4 text-sm leading-relaxed text-white/70">
-            Чимээгүй тансаг, удаан эдэлгээтэй өдөр тутмын хувцас. Зөөлөн ноолуур, нягт хөвөн, цэвэр зүсэлт — хотын хэмнэлд зориулав.
+            Пүүз, ботинк, туфли, хүүхдийн гутал. Размер бүрийн үлдэгдэл бодит цагт — 14 хоногт размер солино.
           </p>
           <div className="mt-8">
             <p className={heading}>Мэдээллийн товхимол</p>
@@ -39,9 +39,9 @@ export async function Footer() {
             <li><Link href="/help/how-to-order" className={link}>Хэрхэн захиалах вэ</Link></li>
             <li><Link href="/help/delivery" className={link}>Хүргэлт</Link></li>
             <li><Link href="/help/returns" className={link}>Буцаалт</Link></li>
-            <li><Link href="/help/exchange" className={link}>Хэмжээ солих</Link></li>
+            <li><Link href="/help/exchange" className={link}>Размер солих</Link></li>
             <li><Link href="/help/payment" className={link}>Төлбөр</Link></li>
-            <li><Link href="/size-guide" className={link}>Хэмжээний хүснэгт</Link></li>
+            <li><Link href="/size-guide" className={link}>Размерын хүснэгт</Link></li>
             <li><Link href="/orders" className={link}>Миний захиалга</Link></li>
           </ul>
         </div>
@@ -50,15 +50,21 @@ export async function Footer() {
           <ul className="space-y-2.5 text-[13.5px] text-white/85">
             <li>{content.info.contactEmail}</li>
             <li className="text-white/60">{content.info.contactHours}</li>
-            <li className="flex gap-5 pt-1">
-              <a href={BRAND.facebook} target="_blank" rel="noopener" className={`${link} inline-flex items-center gap-1`}>
-                Facebook <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-              <a href={BRAND.instagram} target="_blank" rel="noopener" className={`${link} inline-flex items-center gap-1`}>
-                Instagram <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-            </li>
-            <li><Link href="/about" className={link}>Брэндийн тухай</Link></li>
+            {(BRAND.facebook || BRAND.instagram) && (
+              <li className="flex gap-5 pt-1">
+                {BRAND.facebook && (
+                  <a href={BRAND.facebook} target="_blank" rel="noopener" className={`${link} inline-flex items-center gap-1`}>
+                    Facebook <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                )}
+                {BRAND.instagram && (
+                  <a href={BRAND.instagram} target="_blank" rel="noopener" className={`${link} inline-flex items-center gap-1`}>
+                    Instagram <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                )}
+              </li>
+            )}
+            <li><Link href="/about" className={link}>Дэлгүүрийн тухай</Link></li>
             <li><Link href="/credits" className={link}>Зургийн эх сурвалж</Link></li>
             <li><Link href="/help/privacy" className={link}>Нууцлал</Link></li>
             <li><Link href="/admin/login" className={link}>Удирдлагын самбар (демо)</Link></li>

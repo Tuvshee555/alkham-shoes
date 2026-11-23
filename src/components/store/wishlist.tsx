@@ -6,8 +6,8 @@ import { cn } from '@/lib/cn'
 
 // The wishlist lives in the visitor's own browser (no account needed). The
 // product data shown for it is always loaded from the database.
-const KEY = 'manan.wishlist'
-const EVENT = 'manan:wishlist'
+const KEY = 'alkham.wishlist'
+const EVENT = 'alkham:wishlist'
 
 function subscribe(onChange: () => void) {
   window.addEventListener('storage', onChange)

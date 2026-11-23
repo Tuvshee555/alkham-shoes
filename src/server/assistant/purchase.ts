@@ -11,6 +11,7 @@
 // model, and nothing is ever described as paid.
 //
 // Pure: state in, reply and state patch out. The order and cart services are injected.
+import { STORE_VOICE } from '@/lib/store-voice'
 import { sizeLabel } from '@/lib/catalog'
 import type { CatalogProduct, CatalogVariant } from '@/lib/catalog-filter'
 import type { ChatAction } from '@/lib/assistant/types'
@@ -443,7 +444,7 @@ async function start(input: PurchaseInput, p: CatalogProduct | null, quantity: n
       })
     }
     return outcome({
-      text: 'Аль барааг авах вэ? Барааны нэр эсвэл төрлийг бичээрэй (жишээ: «хар hoodie L авъя»), эсвэл барааны хуудсан дээрээс надаас асуугаарай.',
+      text: `Аль барааг авах вэ? Барааны нэр эсвэл төрлийг бичээрэй (жишээ: «${STORE_VOICE.orderExample.toLowerCase()}»), эсвэл барааны хуудсан дээрээс надаас асуугаарай.`,
       intent: 'purchase',
       draft,
       events: ['purchase_intent'],

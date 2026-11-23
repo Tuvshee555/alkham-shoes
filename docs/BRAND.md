@@ -1,30 +1,29 @@
 # Brand
 
-MANAN is a fictional label created for this demonstration. It is not a registered company and
-not an Ursgal Digital client.
+ALKHAM is a fictional shoe shop created for this demonstration. It is not a registered company
+and not an Ursgal Digital client.
 
-## Name directions considered
+## Name
 
-| Direction | Meaning | Why not / why |
-|---|---|---|
-| **MANAN** (манан) | "mist" | **Chosen.** Two open syllables, identical in Latin and Cyrillic pronunciation, short enough for a domain and a handle. "Mist" maps directly onto the visual identity: soft greys, ivory, quiet luxury, Ulaanbaatar winter mornings. |
-| SUUDER (сүүдэр) | "shadow" | Strong monochrome mood, but the transliteration is ambiguous (suuder / süüder / suudar) — weak for a domain and for word of mouth. |
-| ZURAAS (зураас) | "line" | Fits architectural minimalism, but three syllables and a harsher sound read less premium. |
-
-Availability of domains and social handles was **not** checked; the name is a demo choice.
-To rename, edit `src/lib/brand.ts` (and the store name under Admin → Тохиргоо).
+**ALKHAM** (алхам) means "a step". Two syllables, the same in Latin and Cyrillic, short enough for
+a domain and a handle, and it says what the shop sells without saying "shoe". Tagline:
+«Алхам бүрт тохирно.» ("Fits every step."). To rename, edit `src/lib/brand.ts` and the store
+name under Admin → Тохиргоо.
 
 ## Identity
 
-- **Palette** — warm ivory paper `#f7f4ef`, ink `#161514`, charcoal `#2c2a27`, stone neutrals,
-  one restrained oxblood accent `#7a3428` used only for scarcity ("Цөөн үлдсэн").
-- **Type** — Noto Serif Display (high-contrast editorial serif, full Cyrillic) for headlines;
-  Jost (geometric, Futura-like) for interface and body. Wordmark: Jost, uppercase, wide tracking.
-- **Form** — sharp corners, hairline rules, generous white space, large photography. No
-  gradients except photo scrims, no rounded-card grids, no decorative clutter.
-- **Photography** — one coherent studio editorial (Jeremy Marasigan, Burst) plus a winter
-  outdoor series for the campaign; all licensed (see IMAGE_CREDITS.md).
-- **Voice** — calm, precise, honest. No fake discounts, no "was" prices, no invented
-  testimonials or statistics. Demo status is stated wherever a visitor could be misled.
-- **Admin** — a deliberately different, SaaS-like language (rounded cards, sentence-case
-  buttons) so the back office reads as a tool, not as the brand.
+- **Palette** — cool sidewalk greys (`#eceef0` paper, `#e2e5e8`, `#d6dadf`), ink `#0e1115`,
+  one cobalt accent `#2340e0` for actions, and a shoebox-label yellow `#f2ce3a` used only on
+  sizes and the "new" badge.
+- **Type** — Unbounded (wide geometric display, Cyrillic) for headings, prices and sizes;
+  Golos Text (a Cyrillic-first UI face) for everything else. Sentence case everywhere — no
+  tracked capitals.
+- **Signature** — the size run: square size chips with an ink border, like the label on a
+  shoebox. On the home page the run is the way in: pick a size, see only shoes in stock in it.
+- **Photography** — Burst (Shopify) stock photos of real shoes on plain surfaces; product
+  photos never show a logo that is not ours to use.
+
+## Voice
+
+Plain, practical Mongolian. "Размер" for shoe sizes (what shoppers say), foot length in
+centimetres, no invented claims about materials or comfort beyond the product data.

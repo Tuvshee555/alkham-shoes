@@ -8,6 +8,7 @@ import { RecentlyViewed } from '@/components/store/recently-viewed'
 import { SizeGuideTable } from '@/components/store/size-guide-table'
 import { BRAND } from '@/lib/brand'
 import { AUDIENCE_LABELS, TAG_LABELS } from '@/lib/catalog'
+import { sizeChartKind } from '@/lib/size-chart'
 import { availabilityOf, type CatalogProduct } from '@/lib/catalog-filter'
 import { formatMoney } from '@/lib/money'
 import { appUrl } from '@/server/app-url'
@@ -16,7 +17,6 @@ import { getStoreContent } from '@/server/queries/settings'
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }
 
-const BOTTOMS = new Set(['trousers', 'jeans'])
 const SHOE_MEASURE_TIP = 'Хөлийнхөө уртыг өсгийнөөс хамгийн урт хурууны үзүүр хүртэл хэмжиж, хүснэгтээс размераа олно.'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -51,7 +51,7 @@ function related(product: ProductDetail, catalog: CatalogProduct[]): CatalogProd
 function Section({ title, children, id, open = false }: { title: string; children: React.ReactNode; id?: string; open?: boolean }) {
   return (
     <details id={id} open={open} className="group border-b border-stone-200">
-      <summary className="flex items-center justify-between py-4 text-[13px] font-medium uppercase tracking-[0.1em]">
+      <summary className="flex items-center justify-between py-4 text-[15px] font-semibold">
         {title}
         <span className="text-lg font-light transition group-open:rotate-45" aria-hidden>
           +
@@ -67,6 +67,7 @@ async function ProductPageBody({ params, searchParams }: Props) {
   const product = await getProductDetail(slug)
   if (!product) notFound()
   const [stockRows, content, catalog] = await Promise.all([getVariantStock(product.id), getStoreContent(), getCatalog()])
+  const chartKind = sizeChartKind(product.categorySlug)
   const stock: LiveStock = Object.fromEntries(stockRows.map((r) => [r.id, { stock: r.stock, lowStockThreshold: r.lowStockThreshold, isActive: r.isActive }]))
   const initialColor = typeof sp.color === 'string' ? sp.color : null
   const relatedProducts = related(product, catalog)
@@ -122,13 +123,10 @@ async function ProductPageBody({ params, searchParams }: Props) {
         </p>
       </Section>
       {!product.sizes.every((s) => s === 'ONE SIZE') && (
-        <Section title="Хэмжээний заавар" id="size-guide">
-          <SizeGuideTable
-            guide={content.sizeGuide}
-            kind={product.categorySlug === 'shoes' ? 'shoes' : BOTTOMS.has(product.categorySlug) ? 'bottoms' : 'tops'}
-          />
+        <Section title="Размерын заавар" id="size-guide">
+          <SizeGuideTable guide={content.sizeGuide} kind={chartKind} />
           <p className="mt-3 text-[12.5px] text-stone-600">
-            {product.categorySlug === 'shoes' ? SHOE_MEASURE_TIP : content.sizeGuide.note}
+            {chartKind === 'shoes' || chartKind === 'kids' ? `${SHOE_MEASURE_TIP} ${content.sizeGuide.note}` : content.sizeGuide.note}
           </p>
           <Link href="/size-guide" className="mt-2 inline-block text-[12.5px] underline underline-offset-4">
             Бүтэн хүснэгт
@@ -149,13 +147,13 @@ async function ProductPageBody({ params, searchParams }: Props) {
         </Link>
       </Section>
       <Section title="Буцаалт ба солилт">
-        <p>14 хоногийн дотор өмсөөгүй, шошготой барааг буцаах эсвэл хэмжээг нэг удаа үнэгүй солих боломжтой.</p>
+        <p>Гадаа өмсөөгүй, хайрцаг, шошго нь бүтэн гутлыг 14 хоногийн дотор буцаах эсвэл размерыг нэг удаа үнэгүй солих боломжтой.</p>
         <div className="mt-3 flex gap-4 text-[12.5px]">
           <Link href="/help/returns" className="underline underline-offset-4">
             Буцаалт
           </Link>
           <Link href="/help/exchange" className="underline underline-offset-4">
-            Хэмжээ солих
+            Размер солих
           </Link>
         </div>
       </Section>
@@ -191,7 +189,7 @@ async function ProductPageBody({ params, searchParams }: Props) {
       {relatedProducts.length > 0 && (
         <section className="container-page pt-24" aria-labelledby="related-heading">
           <h2 id="related-heading" className="display mb-8 text-[30px] sm:text-[36px]">
-            Хослуулж өмсөх
+            Төстэй гутал
           </h2>
           <div className="grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-5 lg:grid-cols-4">
             {relatedProducts.map((p) => (

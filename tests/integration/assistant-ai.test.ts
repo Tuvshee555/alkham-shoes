@@ -61,8 +61,8 @@ describe('AI mode (stubbed OpenAI)', () => {
     expect(r?.cards?.map((c) => c.slug)).toContain('oversized-hoodie')
     expect(bodies[0].model).toBe('gpt-4.1-mini')
     expect(bodies[0].tool_choice).toBe('required')
-    // The prompt is MANAN's own and carries no catalogue: facts only come from tools.
-    expect(bodies[0].messages[0].content).toContain('clothing label')
+    // The prompt is the store's own and carries no catalogue: facts only come from tools.
+    expect(bodies[0].messages[0].content).toContain('FACTS RULE')
     expect(bodies[0].messages[0].content).not.toContain('219,000')
     const [usage] = await db.select().from(t.aiUsage)
     expect(usage).toMatchObject({ mode: 'llm', model: 'gpt-4.1-mini', inputTokens: 2400, outputTokens: 300, ok: true, source: 'assistant', conversationId: chat.conversationId })

@@ -1,19 +1,19 @@
 import type { Metadata, Viewport } from 'next'
-import { Jost, Noto_Serif_Display } from 'next/font/google'
+import { Golos_Text, Unbounded } from 'next/font/google'
 import { BRAND } from '@/lib/brand'
 import { appUrl, indexingAllowed } from '@/server/app-url'
 import './globals.css'
 
-const jost = Jost({
+const golos = Golos_Text({
   subsets: ['latin', 'cyrillic'],
-  variable: '--font-jost',
+  variable: '--font-golos',
   display: 'swap',
 })
 
-const serifDisplay = Noto_Serif_Display({
+const unbounded = Unbounded({
   subsets: ['latin', 'cyrillic'],
-  variable: '--font-serif-display',
-  style: ['normal', 'italic'],
+  variable: '--font-unbounded',
+  weight: ['500', '600', '700', '800'],
   display: 'swap',
 })
 
@@ -29,14 +29,14 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#f7f4ef',
+  themeColor: '#eceef0',
   width: 'device-width',
   initialScale: 1,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="mn" className={`${jost.variable} ${serifDisplay.variable}`}>
+    <html lang="mn" className={`${golos.variable} ${unbounded.variable}`}>
       <body className="min-h-dvh">{children}</body>
     </html>
   )

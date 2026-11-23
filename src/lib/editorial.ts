@@ -1,13 +1,10 @@
 // Editorial (campaign) photography used by the homepage and brand pages.
 // Paths are logical: the image loader serves the right width of each file
-// built by scripts/images/build.ts.
+// built by scripts/images/build.ts (keys in scripts/images/manifest.json).
 export const EDITORIAL = {
-  heroLeft: { src: '/images/editorial/hero-latte.webp', alt: 'Латте өнгийн оверсайз hoodie өмссөн загвар өмсөгч цагаан студид' },
-  heroRight: { src: '/images/editorial/hero-cream.webp', alt: 'Цөцгий өнгийн ноолууран свитер өмссөн загвар өмсөгч цонхны гэрэлд' },
-  winterWide: { src: '/images/editorial/winter-woods.webp', alt: 'Хар ноосон пальто өмссөн эмэгтэй цастай ойд' },
-  winterPortrait: { src: '/images/editorial/winter-snow.webp', alt: 'Хар пальто, тартан ороолттой эмэгтэй цасан дунд' },
-  women: { src: '/images/editorial/tile-women.webp', alt: 'Арьсан хүрэм нөмөрсөн эмэгтэй загвар өмсөгч' },
-  men: { src: '/images/editorial/tile-men.webp', alt: 'Дулаалгатай хантааз, саарал свитшот өмссөн эрэгтэй загвар өмсөгч' },
-  story: { src: '/images/editorial/story-knit.webp', alt: 'Цөцгий өнгийн сүлжмэл свитерийн ойрын зураг' },
-  essentials: { src: '/images/editorial/essentials.webp', alt: 'Саарал hoodie, спорт өмд өмссөн загвар өмсөгч' },
+  hero: { src: '/images/editorial/hero.webp', alt: 'Шар дэвсгэр дээр цагаан пүүзтэй зогсож буй хүн' },
+  winter: { src: '/images/editorial/winter-wide.webp', alt: 'Эгнүүлэн тавьсан өвлийн резин гутал' },
+  story: { src: '/images/editorial/story.webp', alt: 'Шинэ гутлаа өмсөж үзэж буй хүн' },
+  leaves: { src: '/images/editorial/leaves.webp', alt: 'Намрын хуурай навчин дээр ботинктой зогсож буй хүн' },
+  kids: { src: '/images/editorial/tile-kids.webp', alt: 'Хүүхдийн жижигхэн гутал, оймс' },
 } as const

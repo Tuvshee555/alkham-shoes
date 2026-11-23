@@ -9,7 +9,6 @@ import path from 'node:path'
 import pg from 'pg'
 import type { TestProject } from 'vitest/node'
 import { runMigrations, withDb } from '../../scripts/lib/tasks'
-import { seed } from '../../src/server/seed'
 
 declare module 'vitest' {
   export interface ProvidedContext {
@@ -50,6 +49,10 @@ export default async function setup(project: TestProject) {
 
   const templateUrl = `postgres://postgres:postgres@127.0.0.1:${PORT}/${TEMPLATE}`
   await runMigrations(templateUrl)
+  // The template holds the MANAN reference catalogue (see src/server/seed/catalog-data.ts).
+  // This process is not a test worker, so it sets the switch itself before loading the seed.
+  process.env.STORE_CATALOG = 'reference'
+  const { seed } = await import('../../src/server/seed')
   await withDb(templateUrl, (db) => seed(db, { owner: { email: 'owner@test.example', password: 'Test-Owner-Password-1', name: 'Тест эзэмшигч' } }))
 
   project.provide('pgAdminUrl', adminUrl)
