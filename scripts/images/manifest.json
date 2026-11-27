@@ -108,6 +108,10 @@
   "key": "bt-lace-women",
   "slug": "boots-against-the-wall",
   "kind": "catalog",
+  "focus": {
+   "x": 0.6,
+   "y": 0.5
+  },
   "title": "Boots Against The Wall",
   "author": "Matthew Henry",
   "license": "burst"
@@ -116,6 +120,12 @@
   "key": "bt-black-heel",
   "slug": "low-shot-of-women-sitting-on-velvet-couch",
   "kind": "catalog",
+  "focus": {
+   "x": 0.48,
+   "y": 0.6
+  },
+  "zoom": 1.25,
+  "sourceWidth": 5000,
   "title": "Low Shot Of Women Sitting On Velvet Couch",
   "author": "Samantha Hurley",
   "license": "burst"
@@ -138,11 +148,17 @@
  },
  {
   "key": "hl-red",
-  "slug": "high-heels-on-steps",
+  "slug": "romantic-couples-feet",
   "kind": "catalog",
-  "title": "High Heels On Steps",
-  "author": "Matthew Henry",
-  "license": "burst"
+  "focus": {
+   "x": 0.62,
+   "y": 0.78
+  },
+  "zoom": 2.1,
+  "sourceWidth": 5000,
+  "title": "Romantic Couples Feet",
+  "author": "Brodie",
+  "license": "cc0"
  },
  {
   "key": "hl-mules",
@@ -189,6 +205,10 @@
   "key": "fm-brogue",
   "slug": "gentlemans-fashion-flatlay",
   "kind": "catalog",
+  "focus": {
+   "x": 0.675,
+   "y": 0.5
+  },
   "title": "Gentlemans Fashion Flatlay",
   "author": "Sarah Pflug",
   "license": "burst"
@@ -238,6 +258,12 @@
   "key": "kd-baby-white",
   "slug": "tiny-white-baby-shoes-on-white-sheet",
   "kind": "catalog",
+  "focus": {
+   "x": 0.43,
+   "y": 0.56
+  },
+  "zoom": 1.3,
+  "sourceWidth": 5000,
   "title": "Tiny White Baby Shoes On White Sheet",
   "author": "Farah",
   "license": "burst"
@@ -246,6 +272,12 @@
   "key": "kd-baby",
   "slug": "baby-shoes",
   "kind": "catalog",
+  "focus": {
+   "x": 0.47,
+   "y": 0.6
+  },
+  "zoom": 1.3,
+  "sourceWidth": 5000,
   "title": "Baby Shoes",
   "author": "Lisa Johnson",
   "license": "burst"
