@@ -18,6 +18,14 @@ export const metadata: Metadata = {
   title: { absolute: `${BRAND.name} — ${BRAND.tagline}` },
   description: 'Пүүз, ботинк, өсгийтэй гутал, туфли, хүүхдийн гутал. Размер, өнгө тус бүрийн үлдэгдэл бодит цагт. (Портфолио демо)',
   alternates: { canonical: '/' },
+  // Shared links (Messenger, Facebook) show this card; product pages use their own photo.
+  openGraph: {
+    type: 'website',
+    locale: 'mn_MN',
+    siteName: BRAND.name,
+    images: [{ url: '/og/home.jpg', width: 1200, height: 630, alt: `${BRAND.name} — ${BRAND.tagline}` }],
+  },
+  twitter: { card: 'summary_large_image', images: ['/og/home.jpg'] },
 }
 
 /** Adult sizes on the hero's size run (the kids' range has its own link). */
@@ -74,7 +82,7 @@ export default async function HomePage() {
       <section className="border-b border-stone-200">
         <div className="mx-auto grid max-w-[90rem] lg:min-h-[calc(100svh-6.25rem)] lg:grid-cols-[1.05fr_1fr]">
           <div className="relative order-1 aspect-[5/4] bg-label sm:aspect-[16/10] lg:order-2 lg:aspect-auto">
-            <Image src={EDITORIAL.hero.src} alt={EDITORIAL.hero.alt} fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-[50%_70%]" />
+            <Image src={EDITORIAL.hero.src} alt={EDITORIAL.hero.alt} fill preload sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-[50%_70%]" />
           </div>
           <div className="order-2 flex flex-col justify-center px-4 py-10 sm:px-6 sm:py-14 lg:order-1 lg:px-10 lg:py-16">
             <h1 className="display max-w-[12ch] animate-rise text-[40px] sm:text-[60px] xl:text-[76px]">{BRAND.tagline}</h1>
@@ -215,7 +223,6 @@ export default async function HomePage() {
         <section className="container-page pt-24">
           <SectionHeading title="Их захиалагддаг" href="/shop" />
           <ProductRow products={bestsellers} />
-          <p className="mt-6 text-[13px] text-stone-600">Демо: эрэмбэ нь сангийн жишээ захиалгад тулгуурласан.</p>
         </section>
       )}
 
@@ -270,10 +277,6 @@ export default async function HomePage() {
                 Дэлгүүрийн тухай <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <p className="mt-10 border-t border-stone-200 pt-5 text-[13px] leading-relaxed text-stone-600">
-              Анхааруулга: {BRAND.name} бол {BRAND.agencyName}-ын бүтээсэн зохиомол дэлгүүр. Бараа, үнэ, үлдэгдэл жишээ өгөгдөл бөгөөд зурагнууд
-              лицензтэй стокийн гэрэл зураг.
-            </p>
           </div>
         </div>
       </section>

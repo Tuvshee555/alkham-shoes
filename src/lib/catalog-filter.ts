@@ -114,6 +114,27 @@ export function colorFamily(hex: string): ColorFamily {
 
 /** Words a shopper may type (Mongolian, Latin, transliterated) → words found in our data. */
 const SYNONYMS: [string[], string[]][] = [
+  // This shop's own words first …
+  [['sneaker', 'sneakers', 'кроссовк', 'krossovk', 'кед', 'ked', 'trainers'], ['пүүз']],
+  [['boot', 'boots', 'ботинк', 'botink', 'ботинок'], ['ботинк']],
+  [['heel', 'heels', 'stiletto', 'pump', 'pumps', 'өсгий'], ['өсгийтэй']],
+  [['туфли', 'tufli', 'туфль', 'oxford', 'brogue', 'derby'], ['туфли', 'оксфорд', 'брог']],
+  [['loafer', 'loafers', 'лофер', 'lofer'], ['лофер']],
+  [['chelsea', 'челси'], ['челси']],
+  [['mule', 'mules', 'мюль'], ['мюль']],
+  [['slipon', 'slip-on', 'слип'], ['слип-он']],
+  [['slipper', 'slippers', 'тапочк', 'шаахай', 'shaahai'], ['шаахай']],
+  [['flat', 'flats', 'балетк', 'хавтгай'], ['хавтгай']],
+  [['kids', 'kid', 'child', 'children', 'хүүхэд', 'huuhed', 'baby', 'нярай'], ['хүүхд', 'нярай']],
+  [['women', 'womens', 'эмэгтэй', 'emegtei'], ['эмэгтэй']],
+  [['men', 'mens', 'эрэгтэй', 'eregtei'], ['эрэгтэй']],
+  [['арьс', 'leather', 'арьсан'], ['арьс']],
+  [['илгэ', 'suede', 'замш', 'zamsh'], ['илгэ']],
+  [['өвөл', 'өвлийн', 'winter', 'дулаан', 'хүйтэн'], ['winter', 'өвлийн']],
+  [['гүйлт', 'running', 'runner', 'sport', 'спорт'], ['спорт', 'гүйлт', 'тор']],
+  [['party', 'үдэшлэг', 'гоёл', 'wedding', 'хурим'], ['үдэшлэг', 'party', 'хурим']],
+  [['office', 'ажил', 'ажлын', 'formal', 'ёслол'], ['office', 'оффис', 'ёслол']],
+  // … then the shared clothing and season words.
   [['hoodie', 'худи', 'hudi', 'малгайтай'], ['hoodie', 'малгайтай']],
   [['свитшот', 'sweatshirt', 'sweat'], ['свитшот']],
   [['футболк', 'футболка', 'подволк', 'tee', 't-shirt', 'tshirt', 'майк'], ['футболк']],
@@ -141,6 +162,33 @@ const SYNONYMS: [string[], string[]][] = [
 ]
 
 const STOP_WORDS = new Set(['байна', 'байгаа', 'юу', 'уу', 'үү', 'вэ', 'бэ', 'нь', 'юм', 'ямар', 'аль', 'танайд', 'танай', 'надад', 'хэрэгтэй', 'the', 'a', 'and', 'for', 'with'])
+
+// Mongolians often type Mongolian in Latin letters on a phone ("puuz", "chihevch"). Product
+// text is Cyrillic, so search compares a Latin spelling of it with a folded query.
+const CYR_TO_LAT: Record<string, string> = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'yo', ж: 'j', з: 'z', и: 'i', й: 'i', к: 'k', л: 'l', м: 'm',
+  н: 'n', о: 'o', ө: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ү: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch',
+  ш: 'sh', щ: 'sh', ъ: '', ы: 'i', ь: 'i', э: 'e', ю: 'yu', я: 'ya',
+}
+
+/** Latin spellings of (normalised) Cyrillic text: ө as «o» and, as people also type it, as «u». */
+export function latinSpellings(text: string): [string, string] {
+  const spell = (o: string) => foldLatin([...text].map((ch) => (ch === 'ө' ? o : (CYR_TO_LAT[ch] ?? ch))).join(''))
+  return [spell('o'), spell('u')]
+}
+
+/** One spelling for the Latin variants of a letter: kh/h, zh/j, c/ts, q/ch, w/v, ü/u, ö/o, «pvvz». */
+export function foldLatin(word: string): string {
+  return word
+    .replace(/kh/g, 'h')
+    .replace(/zh/g, 'j')
+    .replace(/ü/g, 'u')
+    .replace(/ö/g, 'o')
+    .replace(/w/g, 'v')
+    .replace(/vv/g, 'uu')
+    .replace(/q/g, 'ch')
+    .replace(/c(?!h)/g, 'ts')
+}
 
 export function normalizeText(value: string): string {
   return value
@@ -173,8 +221,15 @@ export function matchesQuery(p: CatalogProduct, query: string, tagLabels: Record
     .filter((w) => w.length > 1 && !STOP_WORDS.has(w))
   if (words.length === 0) return true
   const text = searchableText(p, tagLabels)
+  let latin: [string, string] | null = null
   return words.every((word) => {
     if (text.includes(word)) return true
+    if (/[a-z]/.test(word)) {
+      const folded = foldLatin(word)
+      latin ??= latinSpellings(text)
+      if (folded.length >= 3 && latin.some((t) => t.includes(folded))) return true
+      if (folded.length >= 7 && latin.some((t) => t.includes(folded.slice(0, folded.length - 3)))) return true
+    }
     // Mongolian is suffixing: "свитерүүд", "жинснүүд" — try a stem, but never one so short
     // that it matches unrelated words ("хүр" would match "хүртэл").
     if (word.length >= 7 && text.includes(word.slice(0, word.length - 3))) return true
